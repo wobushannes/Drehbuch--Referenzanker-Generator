@@ -22,6 +22,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { DrehbuchKonfiguratorState, ScreenplayProjectMetadata } from '../../types';
+import { Language } from '../../utils/i18n';
 
 interface ProjectManagerModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ interface ProjectManagerModalProps {
   onLoadProject: (projectData: Partial<DrehbuchKonfiguratorState>, projectName: string) => void;
   onSaveProject: (projectName: string, title?: string) => Promise<boolean>;
   onShowToast: (type: 'success' | 'error' | 'info', message: string) => void;
+  language?: Language;
 }
 
 export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
@@ -41,7 +43,9 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
   onLoadProject,
   onSaveProject,
   onShowToast,
+  language = 'DE',
 }) => {
+  const isEn = language === 'EN';
   const [projects, setProjects] = useState<ScreenplayProjectMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -213,14 +217,16 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-zinc-900">
-                  Projekt- &amp; Datenverwaltung
+                  {isEn ? 'Project & Data Manager' : 'Projekt- & Datenverwaltung'}
                 </h2>
                 <span className="px-2 py-0.5 bg-zinc-200 text-zinc-800 text-[10px] font-bold rounded-md font-mono">
                   /data/projects/
                 </span>
               </div>
               <p className="text-xs text-zinc-500">
-                Speichert alle Referenzen, Single-Line-Prompts und Drehbuch-Windows strukturiert als Unterordner auf der Festplatte.
+                {isEn
+                  ? 'Saves all references, single-line prompts and screenplay windows structured in folders on disk.'
+                  : 'Speichert alle Referenzen, Single-Line-Prompts und Drehbuch-Windows strukturiert als Unterordner auf der Festplatte.'}
               </p>
             </div>
           </div>
@@ -247,7 +253,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               }`}
             >
               <FolderOpen className="w-4 h-4" />
-              <span>Projekte durchsuchen ({projects.length})</span>
+              <span>{isEn ? `Browse Projects (${projects.length})` : `Projekte durchsuchen (${projects.length})`}</span>
             </button>
 
             <button
@@ -260,7 +266,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               }`}
             >
               <Save className="w-4 h-4 text-emerald-600" />
-              <span>Aktuelles Projekt in data ablegen</span>
+              <span>{isEn ? 'Save current project into data' : 'Aktuelles Projekt in data ablegen'}</span>
             </button>
 
             <button
@@ -273,14 +279,14 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               }`}
             >
               <FolderPlus className="w-4 h-4" />
-              <span>Neues Projekt anlegen</span>
+              <span>{isEn ? 'Create New Project' : 'Neues Projekt anlegen'}</span>
             </button>
           </div>
 
           <button
             type="button"
             onClick={fetchProjects}
-            title="Projektliste aktualisieren"
+            title={isEn ? 'Refresh project list' : 'Projektliste aktualisieren'}
             className="p-1.5 text-zinc-500 hover:text-zinc-900 rounded-lg hover:bg-zinc-200 transition cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-indigo-600' : ''}`} />
@@ -299,7 +305,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Projekte nach Titel, Ordnername oder Zielgruppe durchsuchen..."
+                  placeholder={isEn ? 'Search projects by title, folder name or target audience...' : 'Projekte nach Titel, Ordnername oder Zielgruppe durchsuchen...'}
                   className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:border-indigo-400 focus:bg-white transition"
                 />
               </div>
@@ -308,16 +314,20 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               {isLoading && projects.length === 0 ? (
                 <div className="py-12 text-center text-zinc-400 text-xs flex flex-col items-center justify-center gap-2">
                   <RefreshCw className="w-6 h-6 animate-spin text-indigo-600" />
-                  <span>Lade Projekte aus /data/projects/...</span>
+                  <span>{isEn ? 'Loading projects from /data/projects/...' : 'Lade Projekte aus /data/projects/...'}</span>
                 </div>
               ) : filteredProjects.length === 0 ? (
                 <div className="py-12 text-center border-2 border-dashed border-zinc-200 rounded-2xl p-8 space-y-3 bg-zinc-50">
                   <Folder className="w-10 h-10 text-zinc-300 mx-auto" />
                   <h3 className="text-sm font-bold text-zinc-800">
-                    {searchQuery ? 'Keine passenden Projekte gefunden' : 'Noch keine Projekte in /data/projects/ vorhanden'}
+                    {searchQuery
+                      ? (isEn ? 'No matching projects found' : 'Keine passenden Projekte gefunden')
+                      : (isEn ? 'No projects in /data/projects/ yet' : 'Noch keine Projekte in /data/projects/ vorhanden')}
                   </h3>
                   <p className="text-xs text-zinc-500 max-w-md mx-auto">
-                    Speichere dein aktuelles Drehbuch oder erstelle ein neues Projekt. Alle Daten, Referenzbilder und generierten Prompts werden sauber im Projektordner abgelegt.
+                    {isEn
+                      ? 'Save your current screenplay or create a new project. All data, reference images and generated prompts are stored cleanly in the project directory.'
+                      : 'Speichere dein aktuelles Drehbuch oder erstelle ein neues Projekt. Alle Daten, Referenzbilder und generierten Prompts werden sauber im Projektordner abgelegt.'}
                   </p>
                   <div className="flex items-center justify-center gap-2 pt-2">
                     <button
@@ -326,7 +336,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                       className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Save className="w-3.5 h-3.5" />
-                      <span>Aktuellen Stand jetzt speichern</span>
+                      <span>{isEn ? 'Save Current State Now' : 'Aktuellen Stand jetzt speichern'}</span>
                     </button>
                     <button
                       type="button"
@@ -334,7 +344,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                       className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
                     >
                       <FolderPlus className="w-3.5 h-3.5" />
-                      <span>Neues Projekt anlegen</span>
+                      <span>{isEn ? 'Create New Project' : 'Neues Projekt anlegen'}</span>
                     </button>
                   </div>
                 </div>
@@ -370,7 +380,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                                   </h4>
                                   {isCurrent && (
                                     <span className="px-1.5 py-0.2 bg-indigo-600 text-white text-[9px] font-bold rounded">
-                                      AKTIV
+                                      {isEn ? 'ACTIVE' : 'AKTIV'}
                                     </span>
                                   )}
                                 </div>
@@ -379,7 +389,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                                   <button
                                     type="button"
                                     onClick={(e) => handleCopyPath(p.folderPath, e)}
-                                    title="Pfad kopieren"
+                                    title={isEn ? 'Copy path' : 'Pfad kopieren'}
                                     className="hover:text-zinc-800 p-0.5"
                                   >
                                     {copiedSlug === p.folderPath ? (
@@ -395,7 +405,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                             <button
                               type="button"
                               onClick={(e) => handleDelete(p.id, p.title, e)}
-                              title="Projektordner löschen"
+                              title={isEn ? 'Delete project folder' : 'Projektordner löschen'}
                               className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -418,7 +428,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                             </span>
                             <span className="flex items-center gap-1 font-medium">
                               <ImageIcon className="w-3 h-3 text-amber-500" />
-                              {p.referencesCount} Ref.
+                              {p.referencesCount} {isEn ? 'Ref.' : 'Ref.'}
                             </span>
                             <span className="flex items-center gap-1 font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
                               <FileText className="w-2.5 h-2.5" />
@@ -427,7 +437,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                           </div>
 
                           <div className="flex items-center gap-1 text-[10px] font-bold text-indigo-600 group-hover:translate-x-0.5 transition">
-                            <span>Laden</span>
+                            <span>{isEn ? 'Load' : 'Laden'}</span>
                             <ArrowRight className="w-3 h-3" />
                           </div>
                         </div>
@@ -445,33 +455,35 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               <div className="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-4.5 space-y-2">
                 <div className="flex items-center gap-2 text-emerald-900 font-bold text-xs">
                   <Save className="w-4 h-4 text-emerald-600" />
-                  <span>Unterordner-Struktur in /data/projects/ anlegen</span>
+                  <span>{isEn ? 'Create subfolder structure in /data/projects/' : 'Unterordner-Struktur in /data/projects/ anlegen'}</span>
                 </div>
                 <p className="text-xs text-emerald-800 leading-relaxed">
-                  Beim Speichern wird ein eigener Projektordner in <code>/data/projects/{'{projektname}'}/</code> erstellt. Darin werden:
+                  {isEn
+                    ? <>When saving, a dedicated project folder is created in <code>/data/projects/{'{project_name}'}/</code> containing:</>
+                    : <>Beim Speichern wird ein eigener Projektordner in <code>/data/projects/{'{projektname}'}/</code> erstellt. Darin werden:</>}
                 </p>
                 <ul className="text-xs text-emerald-900 list-disc list-inside space-y-1 font-medium">
-                  <li><code>project.json</code> mit dem kompletten Drehbuchzustand</li>
-                  <li><code>references/</code> mit allen Referenzbildern und dem Katalog</li>
-                  <li><code>prompts/windows_single_line.txt</code> (kopierfertige 14-Sekunden Prompts)</li>
-                  <li><code>prompts/camera_director_plan.json</code> &amp; Designkonzept</li>
+                  <li><code>project.json</code> {isEn ? 'with full screenplay state' : 'mit dem kompletten Drehbuchzustand'}</li>
+                  <li><code>references/</code> {isEn ? 'with all reference images and catalog' : 'mit allen Referenzbildern und dem Katalog'}</li>
+                  <li><code>prompts/windows_single_line.txt</code> ({isEn ? 'copy-ready 14s prompts' : 'kopierfertige 14-Sekunden Prompts'})</li>
+                  <li><code>prompts/camera_director_plan.json</code> &amp; {isEn ? 'design concept' : 'Designkonzept'}</li>
                 </ul>
               </div>
 
               <div className="space-y-3.5 bg-white border border-zinc-200 p-5 rounded-2xl shadow-xs">
                 <div>
                   <label className="block text-xs font-bold text-zinc-800 mb-1">
-                    Projekttitel / Name des Bauprojekts:
+                    {isEn ? 'Project Title / Name of Building Project:' : 'Projekttitel / Name des Bauprojekts:'}
                   </label>
                   <input
                     type="text"
                     value={saveTitle}
                     onChange={(e) => setSaveTitle(e.target.value)}
-                    placeholder="z.B. Musterhaus Alpenblick 2026"
+                    placeholder={isEn ? 'e.g. Model House Alpine Vista 2026' : 'z.B. Musterhaus Alpenblick 2026'}
                     className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-300 rounded-xl text-xs font-bold text-zinc-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition"
                   />
                   <p className="text-[10px] text-zinc-500 mt-1 font-mono">
-                    Ordnerpfad: /data/projects/{saveTitle.toLowerCase().replace(/[^a-z0-9_-]+/g, '_') || 'mein_projekt'}/
+                    {isEn ? 'Folder path:' : 'Ordnerpfad:'} /data/projects/{saveTitle.toLowerCase().replace(/[^a-z0-9_-]+/g, '_') || (isEn ? 'my_project' : 'mein_projekt')}/
                   </p>
                 </div>
 
@@ -481,7 +493,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                     onClick={() => setActiveTab('browse')}
                     className="px-4 py-2 border border-zinc-300 hover:bg-zinc-100 text-zinc-700 text-xs font-bold rounded-xl transition cursor-pointer"
                   >
-                    Abbrechen
+                    {isEn ? 'Cancel' : 'Abbrechen'}
                   </button>
                   <button
                     type="button"
@@ -492,12 +504,12 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                     {isSaving ? (
                       <>
                         <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                        <span>Speichere in /data/projects/...</span>
+                        <span>{isEn ? 'Saving to /data/projects/...' : 'Speichere in /data/projects/...'}</span>
                       </>
                     ) : (
                       <>
                         <Save className="w-3.5 h-3.5" />
-                        <span>Projektordner jetzt auf Festplatte anlegen</span>
+                        <span>{isEn ? 'Save project folder on disk now' : 'Projektordner jetzt auf Festplatte anlegen'}</span>
                       </>
                     )}
                   </button>
@@ -512,32 +524,32 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               <div className="bg-zinc-50 border border-zinc-200 p-5 rounded-2xl space-y-3.5">
                 <h3 className="font-bold text-xs text-zinc-900 flex items-center gap-2">
                   <FolderPlus className="w-4 h-4 text-indigo-600" />
-                  <span>Neuen Projektordner initialisieren</span>
+                  <span>{isEn ? 'Initialize New Project Folder' : 'Neuen Projektordner initialisieren'}</span>
                 </h3>
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-800 mb-1">
-                    Projektname:
+                    {isEn ? 'Project Name:' : 'Projektname:'}
                   </label>
                   <input
                     type="text"
                     required
                     value={newProjectTitle}
                     onChange={(e) => setNewProjectTitle(e.target.value)}
-                    placeholder="z.B. Bauhaus Villa Lichtental"
+                    placeholder={isEn ? 'e.g. Bauhaus Villa Lichtental' : 'z.B. Bauhaus Villa Lichtental'}
                     className="w-full px-3.5 py-2.5 bg-white border border-zinc-300 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-indigo-500 transition"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-800 mb-1">
-                    Kurzbeschreibung (optional):
+                    {isEn ? 'Short Description (optional):' : 'Kurzbeschreibung (optional):'}
                   </label>
                   <textarea
                     rows={2}
                     value={newProjectDescription}
                     onChange={(e) => setNewProjectDescription(e.target.value)}
-                    placeholder="z.B. Imagefilm & Architektur-Teaser für exklusive Bauherren"
+                    placeholder={isEn ? 'e.g. Brand film & architectural teaser for discerning clients' : 'z.B. Imagefilm & Architektur-Teaser für exklusive Bauherren'}
                     className="w-full px-3.5 py-2 bg-white border border-zinc-300 rounded-xl text-xs text-zinc-900 focus:outline-none focus:border-indigo-500 transition"
                   />
                 </div>
@@ -548,7 +560,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                     onClick={() => setActiveTab('browse')}
                     className="px-4 py-2 border border-zinc-300 hover:bg-zinc-100 text-zinc-700 text-xs font-bold rounded-xl transition cursor-pointer"
                   >
-                    Zurück
+                    {isEn ? 'Back' : 'Zurück'}
                   </button>
                   <button
                     type="submit"
@@ -556,7 +568,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                     className="px-6 py-2.5 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition flex items-center gap-2 cursor-pointer shadow-xs"
                   >
                     <FolderPlus className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Projekt anlegen &amp; öffnen</span>
+                    <span>{isEn ? 'Create & Open Project' : 'Projekt anlegen & öffnen'}</span>
                   </button>
                 </div>
               </div>
@@ -568,7 +580,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
         <div className="px-6 py-3 border-t border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs text-zinc-500">
           <div className="flex items-center gap-2">
             <span className="font-mono text-[11px] text-zinc-700">
-              Aktives Projekt: <strong>{currentProjectName || 'Standard'}</strong>
+              {isEn ? 'Active Project:' : 'Aktives Projekt:'} <strong>{currentProjectName || (isEn ? 'Default' : 'Standard')}</strong>
             </span>
           </div>
 
@@ -578,7 +590,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
               onClick={onClose}
               className="px-4 py-1.5 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 rounded-xl text-xs font-bold transition cursor-pointer"
             >
-              Schließen
+              {isEn ? 'Close' : 'Schließen'}
             </button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { TargetAudience } from '../types';
 
-export const TARGET_AUDIENCE_CATALOG: TargetAudience[] = [
+export const TARGET_AUDIENCE_CATALOG_DE: TargetAudience[] = [
   {
     id: 'oeffentlicher-dienst',
     name: 'Beamte & Bedienstete des öffentlichen Dienstes (ÖD)',
@@ -81,16 +81,105 @@ export const TARGET_AUDIENCE_CATALOG: TargetAudience[] = [
   },
 ];
 
-export const DEFAULT_TARGET_AUDIENCE = TARGET_AUDIENCE_CATALOG[0];
+export const TARGET_AUDIENCE_CATALOG_EN: TargetAudience[] = [
+  {
+    id: 'oeffentlicher-dienst',
+    name: 'Civil Servants & Public Sector Employees',
+    badge: 'Focus: Maximum Security & Enduring Reliability',
+    ageGroup: '30 to 62 years',
+    coreValues: 'Dependability, guaranteed construction safety, fixed-price warranty, predictable timelines, transparent cost control, generational durability.',
+    psychology: 'Seeks stability, predictability, and minimal risk. Skeptical of fleeting design fads or unbudgeted financing surprises. Desires unwavering solidity, retirement peace of mind, and rock-solid guarantees.',
+    colorSpectrum: 'Quiet, timeless earth and natural tones (sandstone, warm grey, natural pale oak), neutral-warm diffuse daylight, harmonious contrast without harsh specular glare.',
+    soundAesthetic: 'Harmonic classical acoustic strings with calm piano, deep damped sound of solid quality doors closing, weighty footsteps on genuine hardwood, zero synthetic beats.',
+    architecturalFocus: 'Solid craftsmanship, classic pitched or hipped roof geometry, tactile solid doors and window frames, indestructible low-maintenance finishes, clearly partitioned floorplan.',
+    callToActionStyle: 'Trustworthy, authoritative, fact-driven, welcoming without high-pressure sales.',
+    sampleCallToAction: 'Build with guaranteed fixed-price certainty. Request your detailed construction specification now.',
+  },
+  {
+    id: 'management',
+    name: 'Senior & Executive Management',
+    badge: 'Focus: Efficiency, Prestige & Smart Home Automation',
+    ageGroup: '35 to 55 years',
+    coreValues: 'Representative architecture, time optimization, uncompromising premium quality, smart home automation, private sanctuary.',
+    psychology: 'Highly constrained time, exacting performance standards. Wants turnkey move-in without friction. Seeks restorative solace from high-intensity work in an architectural statement embodying poise and modern lifestyle.',
+    colorSpectrum: 'Monochrome elegance with warm accents: Anthracite, exposed fair-faced concrete, dark smoked oak, champagne and brushed brass accents, dramatic blue hour lighting with indirect LED reveals.',
+    soundAesthetic: 'Sophisticated modern electronic ambient with subtle sub-bass pulse and delicate neo-classical piano runs, tactile micro-sounds (click of tactile designer switches, silent sliding glass walls, espresso prep).',
+    architecturalFocus: 'Cubic Bauhaus design language, floor-to-ceiling triple glazing, seamless indoor-outdoor transitions to infinity pool or designer patio, dedicated view-office, fully integrated home automation.',
+    callToActionStyle: 'Exclusive, poised, executive concierge approach.',
+    sampleCallToAction: 'Exclusive living without compromise. Schedule your confidential executive planning session.',
+  },
+  {
+    id: 'aerzte-medizin',
+    name: 'Physicians & Healthcare Professionals',
+    badge: 'Focus: Regeneration, Healthy Building Biology & Serenity',
+    ageGroup: '30 to 58 years',
+    coreValues: 'Certified healthy building biology (hypoallergenic, VOC-free), acoustic isolation, optimal indoor air quality, deep cellular rest.',
+    psychology: 'Constant cognitive load and clinical stress demand a true restorative haven. Deep sensitivity to human health, pure ecological materials, sound dampening, and calming natural connectivity.',
+    colorSpectrum: 'Soft sage, eucalyptus, and warm sandy tones, gentle diffuse light through floor-to-ceiling timber louvers, organic contours, unobstructed views into private botanical gardens.',
+    soundAesthetic: 'Meditative organic soundscape: Gentle solo cello, soft summer breeze in birch trees, serene water trickles, total acoustic silence in bedroom suites via decoupled drywall.',
+    architecturalFocus: 'Certified healthy solid-timber construction, wellness bath with freestanding tub and natural daylight, ergonomic window reading nooks, shielded sleeping wing with absolute blackout.',
+    callToActionStyle: 'Empathetic, restorative, health-conscious.',
+    sampleCallToAction: 'Your healthy retreat for renewed vitality. Explore our certified healthy home concepts.',
+  },
+  {
+    id: 'ab-30-familie',
+    name: 'Couples 30+ & Growing Young Families',
+    badge: 'Focus: Warm Family Belonging & Future-Proof Security',
+    ageGroup: '28 to 42 years',
+    coreValues: 'Generous room for children and pets, financial clarity with sustainable green subsidies, warmth, enduring family focal point.',
+    psychology: 'Founding or growing a family is at center stage. Longing for a protective nest where children can thrive safely. High importance placed on community, garden play space, and energy resilience.',
+    colorSpectrum: 'Warm, sunny, vibrant tones: Pale honey timber, fresh summer morning light, sun-drenched living spaces, lush garden greens with flowering native shrubs.',
+    soundAesthetic: 'Warm acoustic fingerpicked guitar, cheerful glockenspiel or playful piano touches, lively home atmosphere (gentle laughter from the garden, morning coffee aroma, soft wind).',
+    architecturalFocus: 'Open-concept living and dining hub, direct sightline from cooking island to play lawn, generous mudroom for strollers, flexible nursery rooms that adapt over time.',
+    callToActionStyle: 'Heartfelt, welcoming, family-first.',
+    sampleCallToAction: 'Where your family future takes root. Tour our model home with the whole family today.',
+  },
+  {
+    id: 'freiberufler-tech',
+    name: 'Tech Professionals, Creatives & Entrepreneurs',
+    badge: 'Focus: Hybrid Studio Living & High-Velocity Connectivity',
+    ageGroup: '30 to 48 years',
+    coreValues: 'Fluid synergy between life and craft, creative spark, high-speed fiber connectivity, total energy autonomy (solar + battery storage).',
+    psychology: 'Values autonomy, distinctive personality, and unconventional spatial concepts. Frequently works from home and needs an inspiring, sunlit space that effortlessly balances flow state with hospitality.',
+    colorSpectrum: 'Creative loft aesthetic: Raw architectural concrete, warm vertical oak battens, matte black steel, dynamic smart lighting with circadian color temperature shifting.',
+    soundAesthetic: 'Inspiring neo-classical ambient with subtle lo-fi beats, clean room acoustic division, satisfying mechanical keyboard clicks, and warm vinyl texture.',
+    architecturalFocus: 'Double-height ceiling void, mezzanine studio with separate client entrance, acoustic partitions, hidden wiring, maximized northern/eastern glazing for glare-free creative focus.',
+    callToActionStyle: 'Inspiring, cutting-edge, design-driven.',
+    sampleCallToAction: 'Spaces designed for ideas and living. Configure your custom architectural residence now.',
+  },
+  {
+    id: 'best-ager',
+    name: 'Best Agers & Active Retirees (50+)',
+    badge: 'Focus: Barrier-Free Luxury, Master Craft & Enduring Value',
+    ageGroup: '50 to 75 years',
+    coreValues: 'Single-level ease, zero-threshold transitions, low-maintenance garden, master artisanal quality, long-term capital preservation.',
+    psychology: 'Children have moved out; a fulfilling chapter begins centered on comfort, health, mobility, and self-determination into old age. Uncompromising standards for craftsmanship and turnkey service.',
+    colorSpectrum: 'Warm, refined cream and linen tones, gentle late-afternoon sunset glow, warm hardwood decking, welcoming glare-free illumination.',
+    soundAesthetic: 'Quiet, nuanced acoustic elegance (grand piano, acoustic guitar, delicate natural ambiance like birdsong and rustling leaves), deliberate calming tempo.',
+    architecturalFocus: 'Single-level angle bungalow, extra-wide interior doors, seamless sliding transitions to sheltered atrium garden, age-adapted luxury bath with walk-in rainfall shower.',
+    callToActionStyle: 'Respectful, quality-focused, refined and unhurried.',
+    sampleCallToAction: 'Comfort without barriers — for today and tomorrow. Request your personal consultation.',
+  },
+];
 
-export function getTargetAudienceById(id?: string, customList?: TargetAudience[]): TargetAudience {
-  if (!id) return DEFAULT_TARGET_AUDIENCE;
+export const TARGET_AUDIENCE_CATALOG: TargetAudience[] = TARGET_AUDIENCE_CATALOG_DE;
+
+export function getTargetAudienceCatalog(lang: string = 'DE'): TargetAudience[] {
+  return lang === 'EN' ? TARGET_AUDIENCE_CATALOG_EN : TARGET_AUDIENCE_CATALOG_DE;
+}
+
+export const DEFAULT_TARGET_AUDIENCE = TARGET_AUDIENCE_CATALOG_DE[0];
+
+export function getTargetAudienceById(id?: string, customList?: TargetAudience[], lang: string = 'DE'): TargetAudience {
+  const catalog = getTargetAudienceCatalog(lang);
+  const defaultAud = catalog[0] || DEFAULT_TARGET_AUDIENCE;
+  if (!id) return defaultAud;
   if (customList && customList.length > 0) {
     const foundCustom = customList.find((t) => t.id === id);
     if (foundCustom) return foundCustom;
   }
-  const found = TARGET_AUDIENCE_CATALOG.find((t) => t.id === id);
-  return found || DEFAULT_TARGET_AUDIENCE;
+  const found = catalog.find((t) => t.id === id);
+  return found || defaultAud;
 }
 
 /**

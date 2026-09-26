@@ -92,7 +92,7 @@ interface DrehbuchKonfiguratorProps {
   language?: Language;
 }
 
-const CAMERA_PRESETS = [
+export const CAMERA_PRESETS_DE = [
   'Drohnenflug Orbit 360° (Gleitender Kreisflug um das Gebäude)',
   'Drohnenflug Top-Down (Senkrechte Vogelperspektive & Übersicht)',
   'Drohnenflug FPV Fly-Through (Vom Garten durchs Panoramafenster ins Wohnzimmer)',
@@ -103,7 +103,18 @@ const CAMERA_PRESETS = [
   'Weitwinkel Statisch (Epische Architektur-Totale mit 24mm Master Prime)',
 ];
 
-const WEATHER_PRESETS = [
+export const CAMERA_PRESETS_EN = [
+  'Drone Orbit 360° (Smooth circular flight around building)',
+  'Drone Top-Down (Vertical bird\'s eye perspective & overview)',
+  'Drone FPV Fly-Through (From garden through panoramic window into living room)',
+  'Dolly-In (Smooth push-in camera track towards entrance / facade)',
+  'Crane-Up (Vertical crane ascend from front yard to roof ridge)',
+  'Steadicam Walkthrough (Fluid eye-level walk along corridor)',
+  'Slow Tilt & Pan (Slow pan over timber slats & glass facade)',
+  'Wide Angle Static (Epic architectural wide with 24mm Master Prime)',
+];
+
+export const WEATHER_PRESETS_DE = [
   'Sonnig & klarer blauer Himmel mit warmem Sonnenlicht',
   'Goldene Stunde / Sunset (Warme Abendsonne, lange weiche Schatten)',
   'Cinematic Overcast (Diffuses, weiches Architektur-Tageslicht)',
@@ -112,13 +123,31 @@ const WEATHER_PRESETS = [
   'Frischer Sommerregen (Nasse spiegelnde Terrassenfliesen, saftiges Grün)',
 ];
 
-const BACKGROUND_PRESETS = [
+export const WEATHER_PRESETS_EN = [
+  'Sunny & clear blue sky with warm sunlight',
+  'Golden Hour / Sunset (Warm evening sun, long soft shadows)',
+  'Cinematic Overcast (Diffuse, soft architectural daylight)',
+  'Twilight / Blue Hour (House interior warmly illuminated)',
+  'Morning Mist (Mystic rising morning fog in backlight)',
+  'Fresh Summer Rain (Reflective wet patio tiles, lush green)',
+];
+
+export const BACKGROUND_PRESETS_DE = [
   'Neubausiedlung / Grüne Wohnsiedlung mit gepflegtem Vorgarten & Holzterrasse',
   'Wald & hohe Baumkronen (Naturverbunden, geschützt, Kiefernwald)',
   'Idyllische Hanglage mit Panoramablick ins weite Tal',
   'Strand & Meeresküste mit Holzsteg & ruhigem türkisfarbenem Wasser',
   'Alpenpanorama / Majestätische Bergkulisse im Hintergrund',
   'Moderner minimalistischer Designergarten mit Pool & Sonnendeck',
+];
+
+export const BACKGROUND_PRESETS_EN = [
+  'New Residential Area / Green suburb with manicured garden & timber terrace',
+  'Forest & High Canopies (Nature-connected, serene pine woods)',
+  'Scenic Hillside with panoramic vista over the valley',
+  'Beach & Coastline with wooden jetty & calm turquoise water',
+  'Alpine Vista / Majestic mountain scenery in background',
+  'Modern Minimalist Designer Garden with pool & sun deck',
 ];
 
 export const isDarkRetributionGenre = (genre?: string): boolean => {
@@ -130,10 +159,10 @@ export const isDarkRetributionGenre = (genre?: string): boolean => {
 export const isTourGuideGenre = (genre?: string): boolean => {
   if (!genre) return false;
   const g = genre.toLowerCase();
-  return g.includes('reiseführung') || g.includes('tourismus') || g.includes('reisevideo') || g.includes('tourguide');
+  return g.includes('reiseführung') || g.includes('tourismus') || g.includes('reisevideo') || g.includes('tourguide') || g.includes('travel guide');
 };
 
-const GENRE_PRESETS = [
+export const GENRE_PRESETS_DE = [
   'Reiseführung (Reisevideos & Tourismus)',
   'Imagevideo / Brand Film (Kino & Ästhetik)',
   'Imagevideo -> Restaurant (Gastronomie, Fine Dining & Kulinarik)',
@@ -154,7 +183,28 @@ const GENRE_PRESETS = [
   'Reise / Dokumentarisch',
 ];
 
-const CALL_TO_ACTION_PRESETS = [
+export const GENRE_PRESETS_EN = [
+  'Travel Guide (Travel Videos & Tourism)',
+  'Brand Film / Image Video (Cinema & Aesthetics)',
+  'Restaurant / Fine Dining & Culinary Experience',
+  'Cinematic Showcase / Portfolio',
+  'Atmospheric Storytelling',
+  'Music Video / Artist & Mood Film',
+  'Dark Retribution / Action & Revenge (Ghostrider Style)',
+  'Commercial / Advertising',
+  'Architecture & Lifestyle (Real Estate)',
+  'Comedy / Humor',
+  'Horror / Thriller',
+  'Drama / Emotion',
+  'Science-Fiction / Sci-Fi',
+  'Documentary',
+  'Action / Adventure',
+  'Romance / Erotic',
+  'Art / Experimental',
+  'Travel / Documentary',
+];
+
+export const CALL_TO_ACTION_PRESETS_DE = [
   'Entdecke die verborgenen Geschichten der Stadt – Jetzt VIP-Führung buchen',
   'Erlebe die Magie historischer Orte hautnah. Jetzt geführte Tour sichern.',
   'Jetzt Musterhaus besichtigen & Ihr Traumhaus planen',
@@ -164,7 +214,17 @@ const CALL_TO_ACTION_PRESETS = [
   'Qualität spüren. Besuchen Sie unsere Schauhäuser am kommenden Wochenende.',
 ];
 
-const SAMPLE_STICHPUNKTE_LIST = [
+export const CALL_TO_ACTION_PRESETS_EN = [
+  'Discover the hidden stories of the city – Book your VIP tour now',
+  'Experience the magic of historic sites up close. Reserve your guided tour now.',
+  'Visit our model house now & plan your dream home',
+  'Move-in ready in just 4 months – Inquire without obligation today',
+  'Building without compromise. Request your free catalog now.',
+  'Your living space for generations. Schedule a consultation.',
+  'Feel the quality. Visit our show houses this coming weekend.',
+];
+
+export const SAMPLE_STICHPUNKTE_LIST_DE = [
   {
     label: 'Agfachrome CT18: Das Erlöschen des Spektrums (6-Teiliger Film-Zyklus)',
     text: `- Genre: Drama / Apokalyptisch / Psychologischer Thriller
@@ -273,6 +333,92 @@ const SAMPLE_STICHPUNKTE_LIST = [
 - Call to Action: "Exklusives Wohnen über den Dächern der Stadt"`,
   },
 ];
+
+export const SAMPLE_STICHPUNKTE_LIST_EN = [
+  {
+    label: 'Agfachrome CT18: Extinction of the Spectrum (6-Part Film Cycle)',
+    text: `- Genre: Drama / Apocalyptic / Psychological Thriller
+- Setting: Decadent metropolis, monolithic government architecture, abandoned corridors and bunkers
+- Film Emulation: Agfachrome CT18 Master Plugin (AP-41 Reversal Chemistry, cold sage shadows, fading ochre, picturesque dye grain, Zeiss Sonnar & Planar optics)
+- Audio Architecture: Rhythmic infrasound drone (18Hz), mechanical march, mournful cello motifs and high-frequency resonances
+- Part 1 (00:00-00:14): Illusion of control & mass powerlessness – Monolithic ministry, flickering monitors, deep vibration.
+- Part 2 (00:14-00:28): Media hysteria & narratives – Abandoned TV studio, red flashing ON AIR, trembling anchor.
+- Part 3 (00:28-00:42): 5-second warning & ticking fuses – Infrasound sirens, dropping cell towers, digital blackout.
+- Part 4 (00:42-00:56): Societal divide & elite exodus – Barricades, fleeing armored convoys, shattered glass.
+- Part 5 (00:56-01:10): 5 seconds to twelve – Abandoned apartment, ticking mechanical clock, dust swirling in sunbeam.
+- Part 6 (01:10-01:24): The Finale – Silence before shockwave, thermal bleaching, transformation into dust statues in 100mm macro.
+- Call to Action: "Extinction of the Spectrum — A photochemical film cycle on Agfachrome CT18"`,
+  },
+  {
+    label: 'Elemental Matter: Kodachrome 64 K-14 Macro Art (Pigment, Metal & Kinetics)',
+    text: `- Genre: Art / Experimental
+- Protagonist: <Subject 1> Johannes Wobus (@Subject1_johannes_wobus), minimalist dark artist coat, intense eyes, 5500K neutral daylight
+- Setting: Dark studio, basalt vessel, velvety obsidian D-Max shadows, zero yellow sepia drift
+- Emulation: Kodachrome 64 Master Plugin (5500K daylight, 650nm carmine halation, authentic K-14 subtractive hues)
+- Window 1: Macro 100mm T1.8: Hand of @Subject1_johannes_wobus touches dry mineral pigment in basalt crucible, microscopic pyrite reflections
+- Window 2: Contrast line & finish: Draws pigment stroke across cheekbone and neck, velvety obsidian shadow edge, blur-reveal title and outro in pure black
+- Audio & Score: Friction of mineral dust on stone and skin, deep double bass/cello sub-bass
+- Call to Action: "Elemental Matter — Pure Material Kinetics"`,
+  },
+  {
+    label: 'Guided Tour: Avatar Hosts Monument & Cultural Landmark',
+    text: `- Genre: Travel Guide (Travel Videos & Tourism)
+- Avatar / Guide: <Subject 1> Charismatic tour host / avatar (presents directly to camera, lively & engaging)
+- Landmark / Monument: <Building 1> Historic cathedral / monument before blue sky
+- Location: <Building 1> Historic plaza & monumental architecture
+- Window 1: Introduction: Host <Subject 1> stands before grand portal of <Building 1>, welcomes viewers and teases historical mystery
+- Window 2: Spectacular drone flight: Camera ascends above monument, orbits majestically capturing intricate stone carvings
+- Window 3: Detailed walkthrough: <Subject 1> stands by relief carvings of <Building 1>, points out antique inscriptions with intriguing anecdote
+- Window 4: Golden hour & outro: Camera glides back, <Subject 1> smiles inviting viewers to book the VIP guided tour
+- Call to Action: "Discover the hidden stories of the city – Book your VIP tour now"`,
+  },
+  {
+    label: 'Brand Film -> Restaurant: Fine Dining & Gourmet Indulgence',
+    text: `- Setting: Exclusive restaurant with open kitchen & atmospheric candlelight
+- Roles: <Subject 1> Head Chef (masterful plating), <Subject 2> Sommelier (fine wine service), Guests (enjoyment)
+- Location: <Building 1> Restaurant & stylish dining hall
+- Window 1: Macro close-up: <Subject 1> meticulously garnishes gourmet dish with tweezers and micro-herbs
+- Window 2: Culinary passion: Sauté pan flares on gas burner, fragrant steam rises in slow motion
+- Window 3: Elegant table service: <Subject 2> pours ruby red wine into wide crystal glasses in candlelight
+- Window 4: Dining experience & room pan: Smiling guests clink glasses, seamless transition to outro
+- Call to Action: "Taste experiences that linger in memory – Reserve your table today"`,
+  },
+  {
+    label: 'Dark Retribution: Burning Steed & Vengeance (Action Aesthetic)',
+    text: `- Protagonist: Avenger in black leather, glowing eyes & fiery aura (Ghostrider aesthetic)
+- Entity / Prop: A demonic burning steed with flaming mane and glowing hooves
+- Setting: Night cityscape, steaming asphalt, billowing smoke & shattered streetscape
+- Window 1: The avenger descends on the flaming steed from the night sky, impacting with a massive crater
+- Window 2: Slow-motion landing: Tremendous shockwave sweeps across the street, flames reflecting in the rider's eyes
+- Window 3: Vengeance advance: The flaming steed charges forward, asphalt buckling and debris flying
+- Window 4: Epic stillness in sea of flames: The avenger turns toward camera while fire blazes in background
+- Call to Action: "Revenge Unleashed – From the ashes vengeance rises"`,
+  },
+  {
+    label: 'Prefab Architecture: Move-in & Sunset Terrace',
+    text: `- 2 Characters: Homeowner (32) and partner (36) arrive at their new timber frame prefab house
+- Object: Modern timber show house 'Avantgarde 180' with solar panels and garden
+- Window 1: Grand drone orbit 360° over roof with photovoltaic installation and landscaping
+- Window 2: Entering foyer, tactile feel of natural oak and solid entrance door
+- Window 3: Gazing in awe at open-plan living and dining area with panoramic glazing
+- Window 4: Intimate sunset moment on the cedar deck with symbolic key handover
+- Dialogue in English, concluding with compelling Call to Action: "Visit our model home now & plan your dream residence"`,
+  },
+];
+
+export const getCameraPresets = (lang: Language = 'DE') => lang === 'EN' ? CAMERA_PRESETS_EN : CAMERA_PRESETS_DE;
+export const getWeatherPresets = (lang: Language = 'DE') => lang === 'EN' ? WEATHER_PRESETS_EN : WEATHER_PRESETS_DE;
+export const getBackgroundPresets = (lang: Language = 'DE') => lang === 'EN' ? BACKGROUND_PRESETS_EN : BACKGROUND_PRESETS_DE;
+export const getGenrePresets = (lang: Language = 'DE') => lang === 'EN' ? GENRE_PRESETS_EN : GENRE_PRESETS_DE;
+export const getCallToActionPresets = (lang: Language = 'DE') => lang === 'EN' ? CALL_TO_ACTION_PRESETS_EN : CALL_TO_ACTION_PRESETS_DE;
+export const getSampleStichpunkte = (lang: Language = 'DE') => lang === 'EN' ? SAMPLE_STICHPUNKTE_LIST_EN : SAMPLE_STICHPUNKTE_LIST_DE;
+
+export const CAMERA_PRESETS = CAMERA_PRESETS_DE;
+export const WEATHER_PRESETS = WEATHER_PRESETS_DE;
+export const BACKGROUND_PRESETS = BACKGROUND_PRESETS_DE;
+export const GENRE_PRESETS = GENRE_PRESETS_DE;
+export const CALL_TO_ACTION_PRESETS = CALL_TO_ACTION_PRESETS_DE;
+export const SAMPLE_STICHPUNKTE_LIST = SAMPLE_STICHPUNKTE_LIST_DE;
 
 export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
   config,
@@ -919,6 +1065,9 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
       golden_hour: 'Warm Golden Hour Stil',
       art_noir: 'Mamiya RZ67 Art Noir (Monochrom/Chiaroscuro) Stil',
       vintage_16mm: 'Vintage 16mm Analog-Film Stil',
+      fujicolor_eterna_500t: 'Fujicolor Eterna 500T Master Plugin (Die Falsifikation)',
+      agfachrome_ct18: 'Agfachrome CT18 Master Plugin (Das Erlöschen des Spektrums)',
+      kodak_5247: 'Kodak 5247 Master Plugin (ENR Bleach-Bypass)',
       svema_zenit: 'Svema Color & Helios/Jupiter Emulation',
       kodachrome: 'Kodachrome 64 Dia Emulation',
       krasnogorsk_16mm: 'Krasnogorsk-3 16mm Emulation',
@@ -1664,6 +1813,7 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
             lmStudioModel={settings.modelName}
             lmStudioApiKey={settings.apiKey}
             onShowToast={onShowToast}
+            language={language}
           />
 
           {/* Input Card: Stichpunkte OR Presets */}
@@ -1946,10 +2096,10 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
             {/* Analog-Film & Emulsions-Triebwerk (Ultra-Präzise chemisch-optische Simulation) */}
             <AnalogFilmCard
               enabled={ANALOG_PROFILES.some(p => p.id === config.visualStyle)}
-              selectedProfileId={ANALOG_PROFILES.some(p => p.id === config.visualStyle) ? config.visualStyle! : 'svema_zenit'}
+              selectedProfileId={ANALOG_PROFILES.some(p => p.id === config.visualStyle) ? config.visualStyle! : 'fujicolor_eterna_500t'}
               onToggleEnabled={(enabled) => {
                 if (enabled) {
-                  handleSelectVisualStyle('svema_zenit');
+                  handleSelectVisualStyle('fujicolor_eterna_500t');
                 } else {
                   handleSelectVisualStyle('natural');
                 }
@@ -2646,6 +2796,7 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
         }}
         onLoadProject={handleLoadProjectState}
         onShowToast={onShowToast}
+        language={language}
       />
 
       {/* Camera Director Modal with Cinematic Library & LM Studio AI Guidance */}
@@ -2661,6 +2812,7 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
         lmStudioModel={settings.modelName}
         lmStudioApiKey={settings.apiKey}
         onShowToast={onShowToast}
+        language={language}
       />
 
       {/* LM Studio Design & Look Director Modal */}
@@ -2673,6 +2825,7 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
         lmStudioModel={settings.modelName}
         lmStudioApiKey={settings.apiKey}
         onShowToast={onShowToast}
+        language={language}
       />
 
       {/* Project-Based Data Storage Modal (/data/projects/) */}
@@ -2684,6 +2837,7 @@ export const DrehbuchKonfigurator: React.FC<DrehbuchKonfiguratorProps> = ({
         onLoadProject={handleLoadProjectFromDisk}
         onSaveProject={handleSaveProjectToDisk}
         onShowToast={onShowToast}
+        language={language}
       />
 
       {/* Interactive Proposal Claims & Typography Modal Dialog */}

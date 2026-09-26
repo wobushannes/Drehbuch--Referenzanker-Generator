@@ -23,8 +23,10 @@ import {
   BookmarkCheck,
 } from 'lucide-react';
 import { TargetAudience } from '../../types';
+import { Language } from '../../utils/i18n';
 import {
   TARGET_AUDIENCE_CATALOG,
+  getTargetAudienceCatalog,
   generateAudienceProfileFallback,
 } from '../../utils/targetAudienceCatalog';
 
@@ -40,6 +42,7 @@ interface TargetAudienceSelectorProps {
   lmStudioModel?: string;
   lmStudioApiKey?: string;
   onShowToast?: (type: 'success' | 'error' | 'info', message: string) => void;
+  language?: Language;
 }
 
 const AUDIENCE_ICONS: Record<string, React.ReactNode> = {
@@ -65,20 +68,23 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
   lmStudioModel = 'local-model',
   lmStudioApiKey = '',
   onShowToast,
+  language = 'DE',
 }) => {
-  // Combine catalog and custom audiences
+  // Combine localized catalog and custom audiences
   const allAudiences: TargetAudience[] = useMemo(() => {
-    return [...TARGET_AUDIENCE_CATALOG, ...customAudiences];
-  }, [customAudiences]);
+    const baseCatalog = getTargetAudienceCatalog(language);
+    return [...baseCatalog, ...customAudiences];
+  }, [customAudiences, language]);
 
   // Current active audience object
   const currentAudience = useMemo(() => {
+    const baseCatalog = getTargetAudienceCatalog(language);
     return (
       allAudiences.find((a) => a.id === selectedAudienceId) ||
       allAudiences[0] ||
-      TARGET_AUDIENCE_CATALOG[0]
+      baseCatalog[0]
     );
-  }, [allAudiences, selectedAudienceId]);
+  }, [allAudiences, selectedAudienceId, language]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -248,8 +254,10 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
       sampleCallToAction: '',
     });
 
-    onShowToast?.('success', `Zielgruppe "${newAudience.name}" aktiv übernommen!`);
+    onShowToast?.('success', language === 'EN' ? `Target audience "${newAudience.name}" activated!` : `Zielgruppe "${newAudience.name}" aktiv übernommen!`);
   };
+
+  const isEn = language === 'EN';
 
   return (
     <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-xs space-y-5">
@@ -259,19 +267,19 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-900 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-indigo-600" />
-              Zielgruppen-Katalog &amp; Ästhetik-Steuerung
+              {isEn ? 'Target Audience Catalog & Aesthetics Control' : 'Zielgruppen-Katalog & Ästhetik-Steuerung'}
             </span>
             <span className="text-[11px] font-mono text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded-full border border-zinc-200">
-              {allAudiences.length} Zielgruppen &bull; Seite {safeCurrentPage} von {totalPages}
+              {allAudiences.length} {isEn ? 'Audiences' : 'Zielgruppen'} &bull; {isEn ? `Page ${safeCurrentPage} of ${totalPages}` : `Seite ${safeCurrentPage} von ${totalPages}`}
             </span>
           </div>
           <h3 className="text-base font-bold text-zinc-900">
-            Video-Zielgruppe festlegen &amp; frei definieren
+            {isEn ? 'Define & Select Video Target Audience' : 'Video-Zielgruppe festlegen & frei definieren'}
           </h3>
           <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed max-w-3xl">
-            Wähle das Publikum des Films oder definiere eine freie Zielgruppe. LM Studio und der Prompt-Compiler passen
-            das <strong>komplette Video</strong> – inklusive Farbwelt, Lichttemperatur, Sounddesign, Musik, Dialoge und
-            Architektur-Schwerpunkte – verbindlich auf diese Gruppe an.
+            {isEn
+              ? 'Select the film audience or define a custom target group. LM Studio and the prompt compiler align the entire video — color grading, lighting temperature, sound design, music, dialogue, and architectural priorities.'
+              : 'Wähle das Publikum des Films oder definiere eine freie Zielgruppe. LM Studio und der Prompt-Compiler passen das komplette Video – inklusive Farbwelt, Lichttemperatur, Sounddesign, Musik, Dialoge und Architektur-Schwerpunkte – verbindlich auf diese Gruppe an.'}
           </p>
         </div>
 
@@ -283,7 +291,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
             className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ Eigene Zielgruppe definieren (LM Studio)</span>
+            <span>{isEn ? '+ Define Custom Audience (LM Studio)' : '+ Eigene Zielgruppe definieren (LM Studio)'}</span>
           </button>
         </div>
       </div>
@@ -323,7 +331,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                     <div className="flex items-center gap-1">
                       {isCustom && (
                         <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-800 bg-indigo-100 border border-indigo-200 px-1 py-0.2 rounded">
-                          Eigen
+                          {isEn ? 'Custom' : 'Eigen'}
                         </span>
                       )}
                       {isSelected && (
@@ -351,11 +359,11 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                   {isCustom && onDeleteCustomAudience && (
                     <button
                       type="button"
-                      title="Zielgruppe löschen"
+                      title={isEn ? 'Delete audience' : 'Zielgruppe löschen'}
                       onClick={(e) => {
                         e.stopPropagation();
                         onDeleteCustomAudience(audience.id);
-                        onShowToast?.('info', `Zielgruppe "${audience.name}" entfernt.`);
+                        onShowToast?.('info', isEn ? `Audience "${audience.name}" removed.` : `Zielgruppe "${audience.name}" entfernt.`);
                       }}
                       className="text-zinc-500 hover:text-rose-600 transition p-1 rounded hover:bg-rose-50 cursor-pointer"
                     >
@@ -372,9 +380,11 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
         {totalPages > 1 && (
           <div className="flex items-center justify-between pt-2 border-t border-zinc-100">
             <div className="text-xs text-zinc-600">
-              Zeige {(safeCurrentPage - 1) * ITEMS_PER_PAGE + 1}–
-              {Math.min(safeCurrentPage * ITEMS_PER_PAGE, allAudiences.length)} von{' '}
-              {allAudiences.length} Zielgruppen
+              {isEn ? 'Showing ' : 'Zeige '}
+              {(safeCurrentPage - 1) * ITEMS_PER_PAGE + 1}–
+              {Math.min(safeCurrentPage * ITEMS_PER_PAGE, allAudiences.length)}{' '}
+              {isEn ? 'of ' : 'von '}
+              {allAudiences.length} {isEn ? 'audiences' : 'Zielgruppen'}
             </div>
 
             <div className="flex items-center gap-1.5">
@@ -385,7 +395,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer shadow-2xs"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Zurück</span>
+                <span>{isEn ? 'Previous' : 'Zurück'}</span>
               </button>
 
               <div className="flex items-center gap-1 px-1">
@@ -411,7 +421,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 disabled={safeCurrentPage >= totalPages}
                 className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer shadow-2xs"
               >
-                <span>Weiter</span>
+                <span>{isEn ? 'Next' : 'Weiter'}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -442,12 +452,12 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 </span>
                 {customAudiences.some((c) => c.id === currentAudience.id) && (
                   <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
-                    Frei definiert via LM Studio
+                    {isEn ? 'Custom defined via LM Studio' : 'Frei definiert via LM Studio'}
                   </span>
                 )}
               </div>
               <p className="text-[11px] text-zinc-600 mt-0.5">
-                Altersgruppe: <strong className="text-zinc-800">{currentAudience.ageGroup}</strong> &bull; Kernwerte:{' '}
+                {isEn ? 'Age Group: ' : 'Altersgruppe: '}<strong className="text-zinc-800">{currentAudience.ageGroup}</strong> &bull; {isEn ? 'Core Values: ' : 'Kernwerte: '}{' '}
                 {currentAudience.coreValues}
               </p>
             </div>
@@ -461,7 +471,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
             <div className="flex items-center gap-1.5 text-amber-900">
               <Palette className="w-3.5 h-3.5 text-amber-600" />
               <span className="text-[11px] font-bold uppercase tracking-wider">
-                Farbspektrum &amp; Licht
+                {isEn ? 'Color Spectrum & Light' : 'Farbspektrum & Licht'}
               </span>
             </div>
             <p className="text-xs text-zinc-700 leading-relaxed">
@@ -474,7 +484,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
             <div className="flex items-center gap-1.5 text-indigo-900">
               <Headphones className="w-3.5 h-3.5 text-indigo-600" />
               <span className="text-[11px] font-bold uppercase tracking-wider">
-                Sounddesign &amp; Musik
+                {isEn ? 'Sound Design & Music' : 'Sounddesign & Musik'}
               </span>
             </div>
             <p className="text-xs text-zinc-700 leading-relaxed">
@@ -487,7 +497,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
             <div className="flex items-center gap-1.5 text-emerald-900">
               <Home className="w-3.5 h-3.5 text-emerald-600" />
               <span className="text-[11px] font-bold uppercase tracking-wider">
-                Architektur &amp; Haptik
+                {isEn ? 'Architecture & Tactility' : 'Architektur & Haptik'}
               </span>
             </div>
             <p className="text-xs text-zinc-700 leading-relaxed">
@@ -500,7 +510,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
             <div className="flex items-center gap-1.5 text-blue-900">
               <Sparkles className="w-3.5 h-3.5 text-blue-600" />
               <span className="text-[11px] font-bold uppercase tracking-wider">
-                Psychologie &amp; Trigger
+                {isEn ? 'Psychology & Triggers' : 'Psychologie & Trigger'}
               </span>
             </div>
             <p className="text-xs text-zinc-700 leading-relaxed">
@@ -514,10 +524,10 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
           <div className="space-y-0.5">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900">
-                Empfohlener Call-to-Action für {currentAudience.name}:
+                {isEn ? `Recommended Call-to-Action for ${currentAudience.name}:` : `Empfohlener Call-to-Action für ${currentAudience.name}:`}
               </span>
               <span className="text-[10px] font-mono text-amber-800 bg-amber-200/70 px-1.5 py-0.5 rounded">
-                Tonalität: {currentAudience.callToActionStyle}
+                {isEn ? 'Tonality: ' : 'Tonalität: '}{currentAudience.callToActionStyle}
               </span>
             </div>
             <p className="text-xs font-bold text-amber-950">
@@ -530,7 +540,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
             onClick={() => onApplyCtaToVideo(currentAudience.sampleCallToAction)}
             className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold rounded-lg text-xs transition cursor-pointer shadow-2xs shrink-0"
           >
-            <span>Als Video-CTA übernehmen</span>
+            <span>{isEn ? 'Apply as Video CTA' : 'Als Video-CTA übernehmen'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -548,10 +558,10 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-zinc-900">
-                    Freie Zielgruppe definieren
+                    {isEn ? 'Define Custom Target Audience' : 'Freie Zielgruppe definieren'}
                   </h3>
                   <p className="text-xs text-zinc-500">
-                    LM Studio schlägt automatisch Trigger, Farbwelt, Sound und Architektur vor.
+                    {isEn ? 'LM Studio automatically suggests triggers, color palette, sound, and architecture.' : 'LM Studio schlägt automatisch Trigger, Farbwelt, Sound und Architektur vor.'}
                   </p>
                 </div>
               </div>
@@ -570,33 +580,33 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
               <div className="bg-indigo-50/60 border border-indigo-200 rounded-xl p-4 space-y-3">
                 <div>
                   <label className="block text-xs font-bold text-indigo-950 mb-1">
-                    Zielgruppen-Name / Berufsfeld / Gruppe *
+                    {isEn ? 'Audience Name / Profession / Demographic *' : 'Zielgruppen-Name / Berufsfeld / Gruppe *'}
                   </label>
                   <input
                     type="text"
                     value={customForm.name}
                     onChange={(e) => setCustomForm({ ...customForm, name: e.target.value })}
-                    placeholder="z.B. Junge Handwerksmeister &amp; Selbermacher, DINKs, Öko-Bauherren..."
+                    placeholder={isEn ? 'e.g. Master Artisans & DIY Builders, DINKs, Eco-Architects...' : 'z.B. Junge Handwerksmeister & Selbermacher, DINKs, Öko-Bauherren...'}
                     className="w-full text-xs font-semibold px-3 py-2 bg-white border border-indigo-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500 text-zinc-900"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-indigo-950 mb-1">
-                    Optionale Zusatznotizen / Erwartungen
+                    {isEn ? 'Optional Custom Notes / Expectations' : 'Optionale Zusatznotizen / Erwartungen'}
                   </label>
                   <input
                     type="text"
                     value={customForm.hint}
                     onChange={(e) => setCustomForm({ ...customForm, hint: e.target.value })}
-                    placeholder="z.B. Hoher Anteil Eigenleistung, viel Wert auf Kostensicherheit und langlebige Holzkonstruktion"
+                    placeholder={isEn ? 'e.g. High degree of sweat equity, high value on cost certainty and timber architecture' : 'z.B. Hoher Anteil Eigenleistung, viel Wert auf Kostensicherheit und langlebige Holzkonstruktion'}
                     className="w-full text-xs px-3 py-2 bg-white border border-indigo-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-indigo-500 text-zinc-900"
                   />
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
                   <p className="text-[11px] text-indigo-900">
-                    Klicke auf den Button, damit das lokale Sprachmodell die Ästhetik-Attribute ermittelt:
+                    {isEn ? 'Click to generate aesthetic attributes via local LM Studio model:' : 'Klicke auf den Button, damit das lokale Sprachmodell die Ästhetik-Attribute ermittelt:'}
                   </p>
                   <button
                     type="button"
@@ -607,12 +617,12 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                     {isAiLoading ? (
                       <>
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>LM Studio generiert...</span>
+                        <span>{isEn ? 'LM Studio generating...' : 'LM Studio generiert...'}</span>
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>✨ Von LM Studio vorschlagen lassen</span>
+                        <span>{isEn ? '✨ Suggest via LM Studio' : '✨ Von LM Studio vorschlagen lassen'}</span>
                       </>
                     )}
                   </button>
@@ -624,36 +634,36 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 flex items-center gap-1.5">
                     <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-500" />
-                    Profil-Details (LM Studio Vorschau &amp; Feinschliff)
+                    {isEn ? 'Profile Details (LM Studio Preview & Polish)' : 'Profil-Details (LM Studio Vorschau & Feinschliff)'}
                   </h4>
                   <span className="text-[10px] text-zinc-500 font-mono">
-                    Alle Felder editierbar
+                    {isEn ? 'All fields editable' : 'Alle Felder editierbar'}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                      Fokus-Badge
+                      {isEn ? 'Focus Badge' : 'Fokus-Badge'}
                     </label>
                     <input
                       type="text"
                       value={customForm.badge}
                       onChange={(e) => setCustomForm({ ...customForm, badge: e.target.value })}
-                      placeholder="z.B. Fokus: Wertarbeit &amp; Eigenleistung"
+                      placeholder={isEn ? 'e.g. Focus: Artisanship & Reliability' : 'z.B. Fokus: Wertarbeit & Eigenleistung'}
                       className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                      Altersgruppe
+                      {isEn ? 'Age Group' : 'Altersgruppe'}
                     </label>
                     <input
                       type="text"
                       value={customForm.ageGroup}
                       onChange={(e) => setCustomForm({ ...customForm, ageGroup: e.target.value })}
-                      placeholder="z.B. 28 bis 48 Jahre"
+                      placeholder={isEn ? 'e.g. 28 to 48 years' : 'z.B. 28 bis 48 Jahre'}
                       className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900"
                     />
                   </div>
@@ -661,26 +671,26 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
 
                 <div>
                   <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                    Kernwerte (kommagetrennt)
+                    {isEn ? 'Core Values (comma separated)' : 'Kernwerte (kommagetrennt)'}
                   </label>
                   <input
                     type="text"
                     value={customForm.coreValues}
                     onChange={(e) => setCustomForm({ ...customForm, coreValues: e.target.value })}
-                    placeholder="z.B. Wertarbeit, Anpacken, Kostensicherheit, Verlässlichkeit"
+                    placeholder={isEn ? 'e.g. Craftsmanship, Hands-on, Cost certainty, Reliability' : 'z.B. Wertarbeit, Anpacken, Kostensicherheit, Verlässlichkeit'}
                     className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900"
                   />
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                    Psychologie &amp; Trigger (Was treibt die Zielgruppe emotional an?)
+                    {isEn ? 'Psychology & Triggers (What emotionally drives this audience?)' : 'Psychologie & Trigger (Was treibt die Zielgruppe emotional an?)'}
                   </label>
                   <textarea
                     rows={2}
                     value={customForm.psychology}
                     onChange={(e) => setCustomForm({ ...customForm, psychology: e.target.value })}
-                    placeholder="Wünsche, Ängste und unbewusste Treiber beim Hausbau..."
+                    placeholder={isEn ? 'Desires, anxieties and subconscious motivations...' : 'Wünsche, Ängste und unbewusste Treiber beim Hausbau...'}
                     className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 resize-none"
                   />
                 </div>
@@ -688,26 +698,26 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                      Farbspektrum &amp; Lichtführung
+                      {isEn ? 'Color Spectrum & Light Design' : 'Farbspektrum & Lichtführung'}
                     </label>
                     <textarea
                       rows={2}
                       value={customForm.colorSpectrum}
                       onChange={(e) => setCustomForm({ ...customForm, colorSpectrum: e.target.value })}
-                      placeholder="z.B. Erdige Töne, dunkles Lärchenholz, helles Sonnenlicht..."
+                      placeholder={isEn ? 'e.g. Earthy tones, dark larch timber, warm sunlight...' : 'z.B. Erdige Töne, dunkles Lärchenholz, helles Sonnenlicht...'}
                       className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 resize-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                      Sounddesign &amp; Musikästhetik
+                      {isEn ? 'Sound Design & Musicality' : 'Sounddesign & Musikästhetik'}
                     </label>
                     <textarea
                       rows={2}
                       value={customForm.soundAesthetic}
                       onChange={(e) => setCustomForm({ ...customForm, soundAesthetic: e.target.value })}
-                      placeholder="z.B. Treibende Akustikgitarre, Haptikgeräusche (Holz, Klinke)..."
+                      placeholder={isEn ? 'e.g. Driving acoustic guitar, tactile sounds (timber, hardware)...' : 'z.B. Treibende Akustikgitarre, Haptikgeräusche (Holz, Klinke)...'}
                       className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900 resize-none"
                     />
                   </div>
@@ -716,26 +726,26 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                      Architektur-Fokus &amp; Bauteile
+                      {isEn ? 'Architectural Focus & Structural Cues' : 'Architektur-Fokus & Bauteile'}
                     </label>
                     <input
                       type="text"
                       value={customForm.architecturalFocus}
                       onChange={(e) => setCustomForm({ ...customForm, architecturalFocus: e.target.value })}
-                      placeholder="z.B. Doppelgarage, Werkstattbereich, sichtbare Holzbalken..."
+                      placeholder={isEn ? 'e.g. Double garage, workshop studio, exposed rafters...' : 'z.B. Doppelgarage, Werkstattbereich, sichtbare Holzbalken...'}
                       className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                      Tonalität Call-to-Action
+                      {isEn ? 'Call-to-Action Tonality' : 'Tonalität Call-to-Action'}
                     </label>
                     <input
                       type="text"
                       value={customForm.callToActionStyle}
                       onChange={(e) => setCustomForm({ ...customForm, callToActionStyle: e.target.value })}
-                      placeholder="z.B. Direkt, anpackend, ehrlich auf Augenhöhe"
+                      placeholder={isEn ? 'e.g. Direct, honest, peer-to-peer' : 'z.B. Direkt, anpackend, ehrlich auf Augenhöhe'}
                       className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900"
                     />
                   </div>
@@ -743,13 +753,13 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
 
                 <div>
                   <label className="block text-[11px] font-bold text-zinc-700 mb-1">
-                    Beispiel-Call-to-Action (1 Satz für Video-Outro)
+                    {isEn ? 'Sample Call-to-Action (1 Sentence for Video Outro)' : 'Beispiel-Call-to-Action (1 Satz für Video-Outro)'}
                   </label>
                   <input
                     type="text"
                     value={customForm.sampleCallToAction}
                     onChange={(e) => setCustomForm({ ...customForm, sampleCallToAction: e.target.value })}
-                    placeholder="z.B. Echte Qualität für Selbermacher und Profis. Jetzt Planungshandbuch anfordern."
+                    placeholder={isEn ? 'e.g. True quality for makers and professionals. Request your guidebook now.' : 'z.B. Echte Qualität für Selbermacher und Profis. Jetzt Planungshandbuch anfordern.'}
                     className="w-full text-xs px-3 py-1.5 bg-zinc-50 border border-zinc-300 rounded-lg text-zinc-900"
                   />
                 </div>
@@ -763,7 +773,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 onClick={() => setIsCreatingModalOpen(false)}
                 className="px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-200/60 rounded-xl transition cursor-pointer"
               >
-                Abbrechen
+                {isEn ? 'Cancel' : 'Abbrechen'}
               </button>
 
               <button
@@ -773,7 +783,7 @@ export const TargetAudienceSelector: React.FC<TargetAudienceSelectorProps> = ({
                 className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
               >
                 <BookmarkCheck className="w-3.5 h-3.5" />
-                <span>Zielgruppe speichern &amp; aktivieren</span>
+                <span>{isEn ? 'Save & Apply Audience' : 'Zielgruppe speichern & aktivieren'}</span>
               </button>
             </div>
           </div>

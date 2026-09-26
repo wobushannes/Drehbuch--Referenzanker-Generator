@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { DrehbuchKonfiguratorState } from '../../types';
+import { Language } from '../../utils/i18n';
 
 interface SavedPromptsModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ interface SavedPromptsModalProps {
   currentState: DrehbuchKonfiguratorState;
   onLoadState: (loadedState: Partial<DrehbuchKonfiguratorState>, title?: string) => void;
   onShowToast: (type: 'success' | 'error' | 'info', message: string) => void;
+  language?: Language;
 }
 
 interface SavedPromptMeta {
@@ -44,7 +46,9 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
   currentState,
   onLoadState,
   onShowToast,
+  language = 'DE',
 }) => {
+  const isEn = language === 'EN';
   const [files, setFiles] = useState<SavedPromptMeta[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [saveTitle, setSaveTitle] = useState('');
@@ -84,7 +88,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
   const handleSaveCurrent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!saveTitle.trim()) {
-      onShowToast('error', 'Bitte einen Projekttitel angeben.');
+      onShowToast('error', isEn ? 'Please specify a project title.' : 'Bitte einen Projekttitel angeben.');
       return;
     }
 
@@ -106,14 +110,14 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
 
       const data = await res.json();
       if (data.success) {
-        onShowToast('success', `Projekt gespeichert: "${data.filename}" in /data/saved_prompts/`);
+        onShowToast('success', isEn ? `Project saved: "${data.filename}" in /data/saved_prompts/` : `Projekt gespeichert: "${data.filename}" in /data/saved_prompts/`);
         fetchSavedList();
         setActiveTab('load');
       } else {
-        onShowToast('error', data.error || 'Fehler beim Speichern.');
+        onShowToast('error', data.error || (isEn ? 'Error while saving.' : 'Fehler beim Speichern.'));
       }
     } catch (err: any) {
-      onShowToast('error', `Speicherfehler: ${err.message}`);
+      onShowToast('error', `${isEn ? 'Save error' : 'Speicherfehler'}: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
@@ -127,13 +131,13 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
       const data = await res.json();
       if (data.success && data.project) {
         onLoadState(data.project, data.project.title);
-        onShowToast('success', `Projekt "${data.project.title || id}" erfolgreich geladen!`);
+        onShowToast('success', isEn ? `Project "${data.project.title || id}" loaded successfully!` : `Projekt "${data.project.title || id}" erfolgreich geladen!`);
         onClose();
       } else {
-        onShowToast('error', data.error || 'Datei konnte nicht geladen werden.');
+        onShowToast('error', data.error || (isEn ? 'File could not be loaded.' : 'Datei konnte nicht geladen werden.'));
       }
     } catch (err: any) {
-      onShowToast('error', `Ladefehler: ${err.message}`);
+      onShowToast('error', `${isEn ? 'Load error' : 'Ladefehler'}: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +146,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
   // Handle deleting a saved JSON file
   const handleDeleteFile = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!window.confirm(`Möchtest du das gespeicherte Projekt wirklich löschen?`)) return;
+    if (!window.confirm(isEn ? 'Do you really want to delete this saved project?' : 'Möchtest du das gespeicherte Projekt wirklich löschen?')) return;
 
     try {
       const res = await fetch(`/api/prompts/delete/${id}`, {
@@ -150,13 +154,13 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
       });
       const data = await res.json();
       if (data.success) {
-        onShowToast('info', 'Projektdatei gelöscht.');
+        onShowToast('info', isEn ? 'Project file deleted.' : 'Projektdatei gelöscht.');
         fetchSavedList();
       } else {
-        onShowToast('error', data.error || 'Fehler beim Löschen.');
+        onShowToast('error', data.error || (isEn ? 'Error deleting file.' : 'Fehler beim Löschen.'));
       }
     } catch (err: any) {
-      onShowToast('error', `Löschfehler: ${err.message}`);
+      onShowToast('error', `${isEn ? 'Delete error' : 'Löschfehler'}: ${err.message}`);
     }
   };
 
@@ -180,7 +184,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    onShowToast('success', 'JSON-Projektdatei heruntergeladen!');
+    onShowToast('success', isEn ? 'JSON project file downloaded!' : 'JSON-Projektdatei heruntergeladen!');
   };
 
   // Handle local JSON file import
@@ -193,10 +197,10 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
       try {
         const parsed = JSON.parse(event.target?.result as string);
         onLoadState(parsed, parsed.title || file.name);
-        onShowToast('success', `Projekt aus "${file.name}" importiert!`);
+        onShowToast('success', isEn ? `Project imported from "${file.name}"!` : `Projekt aus "${file.name}" importiert!`);
         onClose();
       } catch (err: any) {
-        onShowToast('error', `Ungültiges JSON-Format: ${err.message}`);
+        onShowToast('error', `${isEn ? 'Invalid JSON format' : 'Ungültiges JSON-Format'}: ${err.message}`);
       }
     };
     reader.readAsText(file);
@@ -213,10 +217,12 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-bold text-zinc-900">
-                Prompt-Archiv &amp; JSON-Speicher (data/saved_prompts)
+                {isEn ? 'Prompt Archive & JSON Storage (data/saved_prompts)' : 'Prompt-Archiv & JSON-Speicher (data/saved_prompts)'}
               </h2>
               <p className="text-xs text-zinc-500">
-                Drehbücher, Windows &amp; Referenzen als JSON auf Festplatte speichern &amp; laden
+                {isEn
+                  ? 'Save & load screenplays, windows & references as JSON on disk'
+                  : 'Drehbücher, Windows & Referenzen als JSON auf Festplatte speichern & laden'}
               </p>
             </div>
           </div>
@@ -242,7 +248,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
             }`}
           >
             <FolderOpen className="w-4 h-4 text-amber-600" />
-            <span>Gespeicherte Projekte ({files.length})</span>
+            <span>{isEn ? `Saved Projects (${files.length})` : `Gespeicherte Projekte (${files.length})`}</span>
           </button>
 
           <button
@@ -255,7 +261,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
             }`}
           >
             <Save className="w-4 h-4 text-emerald-600" />
-            <span>Aktuelles Projekt speichern</span>
+            <span>{isEn ? 'Save Current Project' : 'Aktuelles Projekt speichern'}</span>
           </button>
 
           <button
@@ -268,7 +274,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
             }`}
           >
             <Download className="w-4 h-4 text-blue-600" />
-            <span>Import / Export (JSON Datei)</span>
+            <span>{isEn ? 'Import / Export (JSON File)' : 'Import / Export (JSON Datei)'}</span>
           </button>
         </div>
 
@@ -277,7 +283,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
           {activeTab === 'load' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between text-xs text-zinc-600">
-                <span>Verfügbare JSON-Dateien in <code>/data/saved_prompts/*.json</code>:</span>
+                <span>{isEn ? 'Available JSON files in' : 'Verfügbare JSON-Dateien in'} <code>/data/saved_prompts/*.json</code>:</span>
                 <button
                   type="button"
                   onClick={fetchSavedList}
@@ -285,16 +291,20 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
                   className="flex items-center gap-1 text-zinc-500 hover:text-zinc-900 transition cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-                  <span>Aktualisieren</span>
+                  <span>{isEn ? 'Refresh' : 'Aktualisieren'}</span>
                 </button>
               </div>
 
               {files.length === 0 ? (
                 <div className="text-center py-12 bg-white border border-dashed border-zinc-300 rounded-xl p-8">
                   <FileJson className="w-10 h-10 text-zinc-400 mx-auto mb-2" />
-                  <p className="text-sm font-bold text-zinc-800">Noch keine JSON-Projekte gespeichert</p>
+                  <p className="text-sm font-bold text-zinc-800">
+                    {isEn ? 'No saved JSON projects yet' : 'Noch keine JSON-Projekte gespeichert'}
+                  </p>
                   <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
-                    Speichere deinen aktuellen Drehbuch-Entwurf oder wähle den Tab „Aktuelles Projekt speichern“.
+                    {isEn
+                      ? 'Save your current screenplay draft or switch to the "Save Current Project" tab.'
+                      : 'Speichere deinen aktuellen Drehbuch-Entwurf oder wähle den Tab „Aktuelles Projekt speichern“.'}
                   </p>
                 </div>
               ) : (
@@ -313,7 +323,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
                           <button
                             type="button"
                             onClick={(e) => handleDeleteFile(file.id, e)}
-                            title="Löschen"
+                            title={isEn ? 'Delete' : 'Löschen'}
                             className="text-zinc-400 hover:text-red-600 p-1 rounded transition opacity-0 group-hover:opacity-100"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -329,7 +339,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
                           <LayoutGrid className="w-3 h-3 text-indigo-500" />
                           {file.windowCount} Windows
                         </span>
-                        <span>{new Date(file.createdAt).toLocaleDateString('de-DE')}</span>
+                        <span>{new Date(file.createdAt).toLocaleDateString(isEn ? 'en-US' : 'de-DE')}</span>
                       </div>
                     </div>
                   ))}
@@ -342,47 +352,47 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
             <form onSubmit={handleSaveCurrent} className="space-y-4 max-w-lg mx-auto bg-white p-6 rounded-xl border border-zinc-200 shadow-xs">
               <div>
                 <label className="block text-xs font-bold text-zinc-800 mb-1">
-                  Projekttitel / Dateiname
+                  {isEn ? 'Project Title / File Name' : 'Projekttitel / Dateiname'}
                 </label>
                 <input
                   type="text"
                   value={saveTitle}
                   onChange={(e) => setSaveTitle(e.target.value)}
-                  placeholder="z.B. Musterhaus_Avantgarde_4K"
+                  placeholder={isEn ? 'e.g. ModelHouse_Avantgarde_4K' : 'z.B. Musterhaus_Avantgarde_4K'}
                   className="w-full px-3 py-2 text-sm bg-zinc-50 border border-zinc-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                   required
                 />
                 <p className="text-[11px] text-zinc-500 mt-1">
-                  Wird als <code>data/saved_prompts/[name].json</code> auf dem Server gespeichert.
+                  {isEn ? 'Saved as' : 'Wird als'} <code>data/saved_prompts/[name].json</code> {isEn ? 'on the server.' : 'auf dem Server gespeichert.'}
                 </p>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-zinc-800 mb-1">
-                  Beschreibung / Notizen (optional)
+                  {isEn ? 'Description / Notes (optional)' : 'Beschreibung / Notizen (optional)'}
                 </label>
                 <textarea
                   value={saveDescription}
                   onChange={(e) => setSaveDescription(e.target.value)}
-                  placeholder="z.B. Zielgruppe Handwerk & Bauherren, 4 Windows, 35mm Steadicam, warmes Licht..."
+                  placeholder={isEn ? 'e.g. Target audience builders & craftspeople, 4 windows, 35mm Steadicam, warm light...' : 'z.B. Zielgruppe Handwerk & Bauherren, 4 Windows, 35mm Steadicam, warmes Licht...'}
                   rows={3}
                   className="w-full px-3 py-2 text-xs bg-zinc-50 border border-zinc-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
 
               <div className="bg-zinc-50 p-3 rounded-lg border border-zinc-200 text-xs text-zinc-700 space-y-1">
-                <div className="font-bold text-zinc-900">Umfang des Speicherstands:</div>
+                <div className="font-bold text-zinc-900">{isEn ? 'Save Snapshot Contents:' : 'Umfang des Speicherstands:'}</div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{currentState.windows?.length || currentState.windowCount} Windows mit Camführungen</span>
+                  <span>{currentState.windows?.length || currentState.windowCount} {isEn ? 'Windows with camera movements' : 'Windows mit Camführungen'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{currentState.references?.length || 0} Referenzen (inkl. Logo-Wasserzeichen)</span>
+                  <span>{currentState.references?.length || 0} {isEn ? 'References (incl. logo watermark)' : 'Referenzen (inkl. Logo-Wasserzeichen)'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Aktive Zielgruppe &amp; Call-to-Action</span>
+                  <span>{isEn ? 'Active Target Audience & Call-to-Action' : 'Aktive Zielgruppe & Call-to-Action'}</span>
                 </div>
               </div>
 
@@ -392,7 +402,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
                 className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
-                <span>{isSaving ? 'Wird gespeichert...' : 'Jetzt als JSON im System speichern'}</span>
+                <span>{isSaving ? (isEn ? 'Saving...' : 'Wird gespeichert...') : (isEn ? 'Save as JSON in system now' : 'Jetzt als JSON im System speichern')}</span>
               </button>
             </form>
           )}
@@ -402,10 +412,12 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
               <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-xs space-y-3">
                 <div className="flex items-center gap-2 font-bold text-sm text-zinc-900">
                   <Download className="w-4 h-4 text-blue-600" />
-                  <span>1-Click JSON-Export herunterladen</span>
+                  <span>{isEn ? 'Download 1-Click JSON Export' : '1-Click JSON-Export herunterladen'}</span>
                 </div>
                 <p className="text-xs text-zinc-600">
-                  Lädt den aktuellen Drehbuchstand als saubere <code>.json</code> Datei auf deinen Computer herunter.
+                  {isEn
+                    ? 'Downloads the current screenplay state as a clean .json file onto your computer.'
+                    : 'Lädt den aktuellen Drehbuchstand als saubere .json Datei auf deinen Computer herunter.'}
                 </p>
                 <button
                   type="button"
@@ -413,17 +425,19 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
                   className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
-                  <span>JSON-Datei herunterladen</span>
+                  <span>{isEn ? 'Download JSON file' : 'JSON-Datei herunterladen'}</span>
                 </button>
               </div>
 
               <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-xs space-y-3">
                 <div className="flex items-center gap-2 font-bold text-sm text-zinc-900">
                   <Upload className="w-4 h-4 text-emerald-600" />
-                  <span>Externe JSON-Datei importieren</span>
+                  <span>{isEn ? 'Import External JSON File' : 'Externe JSON-Datei importieren'}</span>
                 </div>
                 <p className="text-xs text-zinc-600">
-                  Lade eine zuvor exportierte Drehbuch-JSON Datei hoch, um das Projekt direkt wiederherzustellen.
+                  {isEn
+                    ? 'Upload a previously exported screenplay JSON file to restore the project immediately.'
+                    : 'Lade eine zuvor exportierte Drehbuch-JSON Datei hoch, um das Projekt direkt wiederherzustellen.'}
                 </p>
                 <input
                   type="file"
@@ -438,7 +452,7 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
                   className="w-full py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border border-zinc-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Upload className="w-4 h-4" />
-                  <span>JSON-Datei auswählen &amp; laden</span>
+                  <span>{isEn ? 'Select & Load JSON File' : 'JSON-Datei auswählen & laden'}</span>
                 </button>
               </div>
             </div>
@@ -447,13 +461,13 @@ export const SavedPromptsModal: React.FC<SavedPromptsModalProps> = ({
 
         {/* Footer */}
         <div className="px-6 py-3 border-t border-zinc-200 bg-zinc-100 flex items-center justify-between text-xs text-zinc-500">
-          <span>Dateipfad: <code>/data/saved_prompts/</code></span>
+          <span>{isEn ? 'File path:' : 'Dateipfad:'} <code>/data/saved_prompts/</code></span>
           <button
             type="button"
             onClick={onClose}
             className="px-4 py-1.5 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 rounded-lg font-bold transition cursor-pointer"
           >
-            Schließen
+            {isEn ? 'Close' : 'Schließen'}
           </button>
         </div>
       </div>

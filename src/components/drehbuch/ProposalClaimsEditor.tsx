@@ -38,48 +38,49 @@ export interface ProposalClaimsEditorModalProps {
     newTypography?: WindowClaimTypography
   ) => void;
   isPressed?: boolean;
+  language?: 'DE' | 'EN';
 }
 
-const FONT_OPTIONS: { id: ClaimFontStyle; label: string; sub: string; sample: string; isCursive?: boolean }[] = [
+const getFontOptions = (isEn: boolean) => [
   {
-    id: 'blockschrift',
-    label: 'Moderne Blockschrift',
-    sub: 'Clean Sans-Serif • Zeitgemäß, direkt & sachlich',
-    sample: 'MODERNE ARCHITEKTUR',
+    id: 'blockschrift' as ClaimFontStyle,
+    label: isEn ? 'Modern Clean Sans' : 'Moderne Blockschrift',
+    sub: isEn ? 'Clean Sans-Serif • Contemporary, direct & objective' : 'Clean Sans-Serif • Zeitgemäß, direkt & sachlich',
+    sample: isEn ? 'MODERN ARCHITECTURE' : 'MODERNE ARCHITEKTUR',
   },
   {
-    id: 'handschrift',
-    label: 'Elegante Handschrift',
-    sub: 'Cursive Script • Emotional, exklusiv & persönlich',
-    sample: 'Exklusiv für Sie kreiert',
+    id: 'handschrift' as ClaimFontStyle,
+    label: isEn ? 'Elegant Cursive Script' : 'Elegante Handschrift',
+    sub: isEn ? 'Cursive Script • Emotional, exclusive & personal' : 'Cursive Script • Emotional, exklusiv & persönlich',
+    sample: isEn ? 'Created exclusively for you' : 'Exklusiv für Sie kreiert',
     isCursive: true,
   },
   {
-    id: 'serif',
-    label: 'Editorial Serif',
-    sub: 'Klassische Eleganz • Gastronomie, Genuss & Kultur',
-    sample: 'Feinste Kulinarik & Genuss',
+    id: 'serif' as ClaimFontStyle,
+    label: isEn ? 'Editorial Serif' : 'Editorial Serif',
+    sub: isEn ? 'Classic Elegance • Dining, pleasure & heritage' : 'Klassische Eleganz • Gastronomie, Genuss & Kultur',
+    sample: isEn ? 'Finest Culinary Art & Taste' : 'Feinste Kulinarik & Genuss',
   },
   {
-    id: 'condensed_bold',
-    label: 'Condensed Bold',
-    sub: 'Kino-Plakat • Kraftvoll, dramatisch & packend',
-    sample: 'DIE ABRECHNUNG BEGINNT',
+    id: 'condensed_bold' as ClaimFontStyle,
+    label: isEn ? 'Condensed Bold' : 'Condensed Bold',
+    sub: isEn ? 'Cinema Poster • Powerful, dramatic & gripping' : 'Kino-Plakat • Kraftvoll, dramatisch & packend',
+    sample: isEn ? 'THE RECKONING BEGINS' : 'DIE ABRECHNUNG BEGINNT',
   },
 ];
 
-const ANIMATION_OPTIONS: { id: ClaimAnimation; label: string; desc: string }[] = [
-  { id: 'blur_reveal', label: 'Blur-Reveal', desc: 'Fokussiert aus Tiefenunschärfe in den Fokus' },
-  { id: 'fade_in', label: 'Sanfter Fade-In', desc: 'Weiches, organisches Einblenden' },
-  { id: 'typewriter', label: 'Schreibmaschine', desc: 'Buchstaben-Aufbau im Takt' },
-  { id: 'hard_cut', label: 'Harter Schnitt', desc: 'Direkter visueller Akzent auf den Beat' },
+const getAnimationOptions = (isEn: boolean) => [
+  { id: 'blur_reveal' as ClaimAnimation, label: isEn ? 'Blur-Reveal' : 'Blur-Reveal', desc: isEn ? 'Resolves smoothly into focus from depth of field' : 'Fokussiert aus Tiefenunschärfe in den Fokus' },
+  { id: 'fade_in' as ClaimAnimation, label: isEn ? 'Gentle Fade-In' : 'Sanfter Fade-In', desc: isEn ? 'Soft, organic opacity dissolve' : 'Weiches, organisches Einblenden' },
+  { id: 'typewriter' as ClaimAnimation, label: isEn ? 'Typewriter' : 'Schreibmaschine', desc: isEn ? 'Rhythmic letter-by-letter reveal' : 'Buchstaben-Aufbau im Takt' },
+  { id: 'hard_cut' as ClaimAnimation, label: isEn ? 'Hard Cut' : 'Harter Schnitt', desc: isEn ? 'Instant visual pop on the musical beat' : 'Direkter visueller Akzent auf den Beat' },
 ];
 
-const PLACEMENT_OPTIONS: { id: ClaimPlacement; label: string; desc: string }[] = [
-  { id: 'lower_third', label: 'Unteres Drittel', desc: 'Klassische Kino-Bauchbinde' },
-  { id: 'center', label: 'Bildmitte', desc: 'Maximaler Hero-Fokus' },
-  { id: 'top_third', label: 'Oberes Drittel', desc: 'Freie Sicht auf Details unten' },
-  { id: 'lower_right', label: 'Unten rechts', desc: 'Dezente Markensignatur' },
+const getPlacementOptions = (isEn: boolean) => [
+  { id: 'lower_third' as ClaimPlacement, label: isEn ? 'Lower Third' : 'Unteres Drittel', desc: isEn ? 'Classic cinema broadcast bar' : 'Klassische Kino-Bauchbinde' },
+  { id: 'center' as ClaimPlacement, label: isEn ? 'Center' : 'Bildmitte', desc: isEn ? 'Maximum hero visual impact' : 'Maximaler Hero-Fokus' },
+  { id: 'top_third' as ClaimPlacement, label: isEn ? 'Top Third' : 'Oberes Drittel', desc: isEn ? 'Keeps bottom action unobstructed' : 'Freie Sicht auf Details unten' },
+  { id: 'lower_right' as ClaimPlacement, label: isEn ? 'Lower Right' : 'Unten rechts', desc: isEn ? 'Subtle brand signature tag' : 'Dezente Markensignatur' },
 ];
 
 export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
@@ -90,7 +91,12 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
   onUpdateWindowClaim,
   onUpdateProposalCta,
   isPressed = false,
+  language = 'DE',
 }) => {
+  const isEn = language === 'EN';
+  const FONT_OPTIONS = getFontOptions(isEn);
+  const ANIMATION_OPTIONS = getAnimationOptions(isEn);
+  const PLACEMENT_OPTIONS = getPlacementOptions(isEn);
   // Selected tab: 1..windowCount or 0 for Outro CTA
   const [selectedTab, setSelectedTab] = useState<number>(1);
 
@@ -242,14 +248,14 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/40 px-2 py-0.5 rounded">
-                  Vorschlag {proposalIndex + 1}
+                  {isEn ? `Proposal ${proposalIndex + 1}` : `Vorschlag ${proposalIndex + 1}`}
                 </span>
                 <span className="font-bold text-sm text-white truncate">
-                  Claims &amp; Typografie-Regie
+                  {isEn ? 'Claims & Typography Directing' : 'Claims & Typografie-Regie'}
                 </span>
               </div>
               <p className="text-[11px] text-zinc-300 truncate mt-0.5">
-                {proposal.title} &bull; {proposal.windowBreakdown.length} Windows &agrave; On-Screen Gestaltung
+                {proposal.title} &bull; {proposal.windowBreakdown.length} {isEn ? 'Windows • On-screen styling' : 'Windows à On-Screen Gestaltung'}
               </p>
             </div>
           </div>
@@ -258,7 +264,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
             type="button"
             onClick={onClose}
             className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition cursor-pointer shrink-0"
-            title="Schließen"
+            title={isEn ? 'Close' : 'Schließen'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -267,7 +273,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
         {/* Navigation Tabs - Horizontally organized, clearly separated */}
         <div className="px-5 py-2.5 bg-zinc-50 border-b border-zinc-200 flex items-center gap-2 overflow-x-auto shrink-0">
           <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-wider mr-1 shrink-0">
-            Szene wählen:
+            {isEn ? 'Select scene:' : 'Szene wählen:'}
           </span>
 
           {proposal.windowBreakdown.map((win) => {
@@ -293,7 +299,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                 {hasText && (
                   <span
                     className={`w-2 h-2 rounded-full ${isTabActive ? 'bg-amber-300' : 'bg-emerald-500'}`}
-                    title="Claim hinterlegt"
+                    title={isEn ? 'Claim configured' : 'Claim hinterlegt'}
                   />
                 )}
               </button>
@@ -326,7 +332,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
               {selectedTab !== 0 && currentWindowConfig && (
                 <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 text-xs space-y-1">
                   <div className="flex items-center justify-between text-zinc-500 text-[10px] font-bold uppercase tracking-wider">
-                    <span>Szene W{currentWindowConfig.windowNumber} Kontext</span>
+                    <span>{isEn ? `Scene W${currentWindowConfig.windowNumber} Context` : `Szene W${currentWindowConfig.windowNumber} Kontext`}</span>
                     <span>{currentWindowConfig.cameraMovement}</span>
                   </div>
                   <p className="font-semibold text-zinc-900">{currentWindowConfig.title}</p>
@@ -343,11 +349,13 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                 <label className="text-xs font-bold text-zinc-800 flex items-center justify-between">
                   <span>
                     {selectedTab === 0
-                      ? 'Finaler Call-to-Action (Outro Text):'
-                      : `On-Screen Claim für Window ${selectedTab}:`}
+                      ? (isEn ? 'Final Call-to-Action (Outro Text):' : 'Finaler Call-to-Action (Outro Text):')
+                      : (isEn ? `On-Screen Claim for Window ${selectedTab}:` : `On-Screen Claim für Window ${selectedTab}:`)}
                   </span>
                   <span className="text-[10px] font-normal text-zinc-600">
-                    {selectedTab === 0 ? 'Wird am Ende eingeblendet' : 'Wird während der Szene eingeblendet'}
+                    {selectedTab === 0
+                      ? (isEn ? 'Displayed at the end of video' : 'Wird am Ende eingeblendet')
+                      : (isEn ? 'Displayed during the scene' : 'Wird während der Szene eingeblendet')}
                   </span>
                 </label>
                 <input
@@ -362,8 +370,8 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                   }}
                   placeholder={
                     selectedTab === 0
-                      ? 'z.B. Jetzt Musterhaus besichtigen & Beratungstermin vereinbaren'
-                      : `z.B. Frische Zutaten & Meisterhafte Handwerkskunst`
+                      ? (isEn ? 'e.g. Tour our model home now & schedule your consultation' : 'z.B. Jetzt Musterhaus besichtigen & Beratungstermin vereinbaren')
+                      : (isEn ? 'e.g. Masterful Craftsmanship & Modern Timber Architecture' : `z.B. Frische Zutaten & Meisterhafte Handwerkskunst`)
                   }
                   className="w-full text-xs sm:text-sm bg-white border border-zinc-300 focus:border-indigo-600 rounded-xl px-3.5 py-2.5 text-zinc-900 focus:outline-none transition shadow-2xs font-medium"
                 />
@@ -372,9 +380,9 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
               {/* Schriftart: Handschrift vs. Blockschrift */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-zinc-800 flex items-center justify-between">
-                  <span>Schriftart &amp; Typografie-Charakter:</span>
+                  <span>{isEn ? 'Font Style & Typography Character:' : 'Schriftart & Typografie-Charakter:'}</span>
                   <span className="text-[10px] font-normal text-indigo-700 font-semibold">
-                    Handschrift vs. Blockschrift
+                    {isEn ? 'Cursive vs. Clean Sans' : 'Handschrift vs. Blockschrift'}
                   </span>
                 </label>
 
@@ -434,7 +442,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                 {/* Animation */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-zinc-800 block">
-                    Einblendung (Animation):
+                    {isEn ? 'Animation / Reveal:' : 'Einblendung (Animation):'}
                   </label>
                   <div className="grid grid-cols-2 gap-1.5">
                     {ANIMATION_OPTIONS.map((a) => {
@@ -468,7 +476,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                 {/* Placement */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-zinc-800 block">
-                    Platzierung im Bild:
+                    {isEn ? 'Screen Placement:' : 'Platzierung im Bild:'}
                   </label>
                   <div className="grid grid-cols-2 gap-1.5">
                     {PLACEMENT_OPTIONS.map((p) => {
@@ -516,7 +524,9 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                     className="rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
                   />
                   <span className="text-xs font-bold text-amber-950">
-                    Handschriftlichen Akzent-Zusatz (Cursive Note) über dem Claim anzeigen
+                    {isEn
+                      ? 'Display handwritten cursive accent note above claim'
+                      : 'Handschriftlichen Akzent-Zusatz (Cursive Note) über dem Claim anzeigen'}
                   </span>
                 </label>
 
@@ -532,11 +542,13 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                           handleUpdateCurrentWindow({ cursiveNote: e.target.value });
                         }
                       }}
-                      placeholder="z.B. Haute Cuisine, Seit 1994, Schlüsselfertig, Exklusiv reservieren..."
+                      placeholder={isEn ? 'e.g. Haute Cuisine, Since 1994, Turnkey, Exclusive reservation...' : 'z.B. Haute Cuisine, Seit 1994, Schlüsselfertig, Exklusiv reservieren...'}
                       className="w-full text-xs bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-zinc-900 focus:outline-none focus:border-amber-500"
                     />
                     <span className="text-[10px] text-amber-800 italic block">
-                      Wird als eleganter, geschwungener Akzent direkt über dem Haupttext eingeblendet.
+                      {isEn
+                        ? 'Rendered as an elegant cursive flourish right above the primary text.'
+                        : 'Wird als eleganter, geschwungener Akzent direkt über dem Haupttext eingeblendet.'}
                     </span>
                   </div>
                 )}
@@ -548,7 +560,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-zinc-700 flex items-center gap-1.5">
                   <Film className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Kino-Vorschau (Simulierter Screen)</span>
+                  <span>{isEn ? 'Cinema Preview (Simulated Screen)' : 'Kino-Vorschau (Simulierter Screen)'}</span>
                 </span>
                 <span className="text-[10px] text-zinc-500 uppercase font-mono">16:9 MiniMax Frame</span>
               </div>
@@ -601,7 +613,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                     </div>
                   ) : (
                     <span className="text-xs text-zinc-600 italic">
-                      (Kein Text eingetragen &bull; Bitte links Claim erfassen)
+                      {isEn ? '(No text entered • Please enter claim on the left)' : '(Kein Text eingetragen • Bitte links Claim erfassen)'}
                     </span>
                   )}
                 </div>
@@ -637,7 +649,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
                           ? 'typewriter text reveal'
                           : 'direct hard cut'
                       }, positioned at ${activePlacement.replace('_', ' ')}.`
-                    : '(Kein On-Screen Claim aktiv)'}
+                    : (isEn ? '(No on-screen claim active)' : '(Kein On-Screen Claim aktiv)')}
                 </p>
               </div>
             </div>
@@ -648,7 +660,11 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
         <div className="px-5 py-3 bg-zinc-50 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
           <div className="text-[11px] text-zinc-600 flex items-center gap-1.5">
             <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Änderungen fließen direkt in die Single-Line Windows &amp; LLM-Prompts ein.</span>
+            <span>
+              {isEn
+                ? 'Changes flow directly into single-line windows & LLM prompts.'
+                : 'Änderungen fließen direkt in die Single-Line Windows & LLM-Prompts ein.'}
+            </span>
           </div>
 
           <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
@@ -657,7 +673,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-xs font-semibold text-zinc-700 hover:text-zinc-900 bg-white hover:bg-zinc-100 border border-zinc-300 rounded-xl transition cursor-pointer shadow-2xs"
             >
-              Abbrechen
+              {isEn ? 'Cancel' : 'Abbrechen'}
             </button>
             <button
               type="button"
@@ -665,7 +681,7 @@ export const ProposalClaimsEditor: React.FC<ProposalClaimsEditorModalProps> = ({
               className="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition shadow-xs flex items-center gap-2 cursor-pointer"
             >
               <Check className="w-4 h-4" />
-              <span>Übernehmen &amp; Speichern</span>
+              <span>{isEn ? 'Apply & Save' : 'Übernehmen & Speichern'}</span>
             </button>
           </div>
         </div>

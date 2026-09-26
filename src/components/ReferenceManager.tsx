@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Upload,
   Plus,
@@ -121,11 +121,15 @@ export const ReferenceManager: React.FC<ReferenceManagerProps> = ({
   const [expandedPromptRefId, setExpandedPromptRefId] = useState<string | null>(null);
 
   // Catalog State (sourced from /src/data/prompts.ts)
-  const [catalog, setCatalog] = useState<PromptTemplate[]>(() => loadPromptCatalog());
+  const [catalog, setCatalog] = useState<PromptTemplate[]>(() => loadPromptCatalog(language));
   const [catalogFilter, setCatalogFilter] = useState<ReferenceCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [copiedCatalogId, setCopiedCatalogId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCatalog(loadPromptCatalog(language));
+  }, [language]);
 
   // New Custom Prompt Form State
   const [isCreatingPrompt, setIsCreatingPrompt] = useState(false);

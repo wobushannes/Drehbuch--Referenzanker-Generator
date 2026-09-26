@@ -23,13 +23,16 @@ interface MaestroWindowsBindingListProps {
   references: ConfigReference[];
   projectTitle?: string;
   onShowToast?: (type: 'success' | 'error' | 'info', message: string) => void;
+  language?: 'DE' | 'EN';
 }
 
 export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps> = ({
   references,
   projectTitle = 'Drehbuch Projekt',
   onShowToast,
+  language = 'DE',
 }) => {
+  const isEn = language === 'EN';
   const [copiedSlotIndex, setCopiedSlotIndex] = useState<number | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -44,14 +47,24 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
   const handleCopySlot = (slotIdx: number, label: string) => {
     navigator.clipboard.writeText(label);
     setCopiedSlotIndex(slotIdx);
-    onShowToast?.('success', `Maestro 2.1.6 Label "${label}" kopiert!`);
+    onShowToast?.(
+      'success',
+      isEn
+        ? `Maestro 2.1.6 label "${label}" copied!`
+        : `Maestro 2.1.6 Label "${label}" kopiert!`
+    );
     setTimeout(() => setCopiedSlotIndex(null), 2000);
   };
 
   const handleCopyAll = () => {
     navigator.clipboard.writeText(rawTextMapping);
     setCopiedAll(true);
-    onShowToast?.('success', 'Alle Maestro 2.1.6 Slot-Labels in die Zwischenablage kopiert!');
+    onShowToast?.(
+      'success',
+      isEn
+        ? 'All Maestro 2.1.6 slot labels copied to clipboard!'
+        : 'Alle Maestro 2.1.6 Slot-Labels in die Zwischenablage kopiert!'
+    );
     setTimeout(() => setCopiedAll(false), 2500);
   };
 
@@ -66,14 +79,18 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-bold text-white tracking-wide">
-                Maestro 2.1.6 Referenz- &amp; Label-Binding Listenausgabe
+                {isEn
+                  ? 'Maestro 2.1.6 Reference & Label Binding Slot Output'
+                  : 'Maestro 2.1.6 Referenz- & Label-Binding Listenausgabe'}
               </h3>
               <span className="text-[10px] font-semibold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full">
-                {bindings.length} aktive Slots
+                {bindings.length} {isEn ? 'active slots' : 'aktive Slots'}
               </span>
             </div>
             <p className="text-xs text-stone-400 mt-0.5">
-              Diese genauen Labels müssen in Maestro 2.1.6 für die jeweiligen Referenz-Slots eingetragen werden:
+              {isEn
+                ? 'These precise labels must be entered in Maestro 2.1.6 for their respective reference slots:'
+                : 'Diese genauen Labels müssen in Maestro 2.1.6 für die jeweiligen Referenz-Slots eingetragen werden:'}
             </p>
           </div>
         </div>
@@ -83,17 +100,17 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
             type="button"
             onClick={handleCopyAll}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold rounded-lg text-xs transition shadow-sm cursor-pointer"
-            title="Alle Slot-Zuordnungen als Textliste kopieren"
+            title={isEn ? 'Copy all slot assignments as plain text' : 'Alle Slot-Zuordnungen als Textliste kopieren'}
           >
             {copiedAll ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copiedAll ? 'Alle kopiert!' : 'Alle Labels kopieren'}</span>
+            <span>{copiedAll ? (isEn ? 'All copied!' : 'Alle kopiert!') : (isEn ? 'Copy all labels' : 'Alle Labels kopieren')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800 transition cursor-pointer"
-            title={isExpanded ? 'Tabelle einklappen' : 'Tabelle ausklappen'}
+            title={isExpanded ? (isEn ? 'Collapse table' : 'Tabelle einklappen') : (isEn ? 'Expand table' : 'Tabelle ausklappen')}
           >
             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
@@ -126,6 +143,14 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
                 ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
                 : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
 
+              const categoryLabel = isHuman
+                ? (isEn ? 'Human' : 'Mensch')
+                : isBuilding
+                ? (isEn ? 'Building & Floorplan' : 'Haus & Grundriss')
+                : isLogo
+                ? (isEn ? 'Logo (25%)' : 'Logo (25%)')
+                : (isEn ? 'Prop' : 'Prop');
+
               return (
                 <div
                   key={b.slotIndex}
@@ -139,7 +164,7 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
                           #{b.slotIndex}
                         </span>
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.2 rounded border ${categoryBadge}`}>
-                          {b.category === 'human' ? 'Mensch' : b.category === 'building' ? 'Haus & Grundriss' : b.category === 'logo' ? 'Logo (25%)' : 'Prop'}
+                          {categoryLabel}
                         </span>
                       </div>
                       <span className="font-mono text-[11px] text-stone-300 bg-stone-800/80 px-2 py-0.5 rounded border border-stone-700">
@@ -171,7 +196,7 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
                   <div className="bg-stone-950/80 border border-stone-800 rounded-lg p-2 flex items-center justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <span className="text-[9px] uppercase font-bold text-amber-400/90 tracking-wider block">
-                        In Maestro 2.1.6 eintragen:
+                        {isEn ? 'Enter in Maestro 2.1.6:' : 'In Maestro 2.1.6 eintragen:'}
                       </span>
                       <span className="font-mono text-xs font-bold text-white block truncate select-all">
                         {b.maestroLabel}
@@ -182,7 +207,7 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
                       type="button"
                       onClick={() => handleCopySlot(b.slotIndex, b.maestroLabel)}
                       className="p-1.5 rounded-md bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white transition cursor-pointer shrink-0"
-                      title="Exaktes Label für Maestro 2.1.6 kopieren"
+                      title={isEn ? 'Copy exact label for Maestro 2.1.6' : 'Exaktes Label für Maestro 2.1.6 kopieren'}
                     >
                       {copiedSlotIndex === b.slotIndex ? (
                         <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -201,11 +226,14 @@ export const MaestroWindowsBindingList: React.FC<MaestroWindowsBindingListProps>
             <div className="flex items-center gap-2">
               <Info className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>
-                <strong>Regel für Maestro 2.1.6:</strong> Trage in Maestro für jeden Slot exakt das gelbe Label (z. B. <code className="text-amber-300 font-mono">@Subject...</code>) ein. Im Prompt unten verknüpft sich das Tag (z. B. <code className="text-amber-300 font-mono">&lt;Subject 2&gt;</code>) dann 100% verlässlich.
+                <strong>{isEn ? 'Rule for Maestro 2.1.6:' : 'Regel für Maestro 2.1.6:'}</strong>{' '}
+                {isEn
+                  ? <>In Maestro, enter the exact yellow label (e.g., <code className="text-amber-300 font-mono">@Subject...</code>) for each slot. In the prompt below, the tag (e.g., <code className="text-amber-300 font-mono">&lt;Subject 2&gt;</code>) then binds with 100% reliability.</>
+                  : <>Trage in Maestro für jeden Slot exakt das gelbe Label (z. B. <code className="text-amber-300 font-mono">@Subject...</code>) ein. Im Prompt unten verknüpft sich das Tag (z. B. <code className="text-amber-300 font-mono">&lt;Subject 2&gt;</code>) dann 100% verlässlich.</>}
               </span>
             </div>
             <span className="text-[10px] font-mono text-stone-500 whitespace-nowrap hidden sm:inline">
-              Logo: 25% Deckkraft rechts unten
+              {isEn ? 'Logo: 25% opacity bottom right' : 'Logo: 25% Deckkraft rechts unten'}
             </span>
           </div>
         </div>

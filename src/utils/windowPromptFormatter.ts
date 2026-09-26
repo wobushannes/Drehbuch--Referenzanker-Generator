@@ -490,6 +490,8 @@ export function buildSingleLineWindowPrompt(params: {
     styleLabel = 'monochrome art noir masterpiece';
   } else if (isWetPlate) {
     styleLabel = 'strictly monochrome wet-plate collodion masterpiece from 1851';
+  } else if (visualStyle === 'fujicolor_eterna_500t') {
+    styleLabel = 'legendary Fujicolor Eterna 500T 8573 motion picture masterpiece with native ECN-2 4th color layer and Zeiss Master Primes';
   } else if (visualStyle === 'agfachrome_ct18') {
     styleLabel = 'legendary Agfachrome CT18 AP-41 photochemical reversal film masterpiece with cold sage shadows and faded ocher highlights';
   } else if (visualStyle === 'kodak_5247') {
@@ -545,6 +547,15 @@ export function buildSingleLineWindowPrompt(params: {
     }
     if (!musicStyle || musicStyle.toLowerCase().includes('cinematic ambient score') || musicStyle.toLowerCase().includes('cinematic music')) {
       enMusicStyle = 'A distant, crackling wax cylinder recording of a dusty solo cello playing a slow melody';
+    }
+  } else if (visualStyle === 'fujicolor_eterna_500t') {
+    enWeather = 'Austere, suffocating diffuse 5000K overcast daylight with clinical geometry, subdued highlight rolloff, and impenetrable cold slate-moss shadows, strictly avoiding warm golden-hour glow';
+    enBackground = 'A stark, institutional modern interior or quiet austere landscape with muted color palettes, cold slate-gray walls, deep obsidian D-Max blacks, and ruthless architectural stillness';
+    if (!soundDesign || soundDesign.toLowerCase().includes('subtle natural') || soundDesign.toLowerCase().includes('natural environmental')) {
+      enSoundDesign = 'Heavy clinical room silence, faint acoustic breathing resonance, slow deliberate footsteps on stone, and low 19Hz infrasound pressure';
+    }
+    if (!musicStyle || musicStyle.toLowerCase().includes('cinematic ambient score') || musicStyle.toLowerCase().includes('cinematic music')) {
+      enMusicStyle = 'A solitary, austere cello note sustained over an ominous sub-bass vibration with sudden suffocating silence';
     }
   } else if (visualStyle === 'agfachrome_ct18') {
     enWeather = 'Subtle, overcast 5000K daylight with delicate muted pastel rolloff, soft ambient glow, casting cool sage-green and slate shadows with gentle highlight rolloff';
@@ -625,6 +636,8 @@ export function buildSingleLineWindowPrompt(params: {
     loraAtmosphere = 'strictly monochrome black-and-white art-noir aesthetic, photochemical medium format emulation: captured on Mamiya RZ67 Pro II with Mamiya Sekor Z 110mm f/2.8 lens on 120 roll film (Kodak Tri-X 400 / Ilford HP5+ chemistry). Masterpiece chiaroscuro Rembrandt directional overhead keylight casting dramatic shadows into pure matte-black void. Extreme tactile microcontrast on pores, beard stubble, and fabric weave, strictly zero artificial CGI skin smoothing, zero waxiness. Rich continuous silver-halide tonal gradation, obsidian D-Max blacks, razor-sharp focus plane with buttery medium-format depth-of-field falloff.';
   } else if (isWetPlate) {
     loraAtmosphere = 'strictly monochrome wet-plate collodion silver-nitrate glass plate style from 1851, orthochromatic sensitivity rendering warm colors pitch black and light blue tones white, heavy dark irregular silver pouring stains and chemical flow marks bleeding from corners, visible dust, hairline emulsion cracks, and fine metallic scratches embedded directly in the silver plate.';
+  } else if (visualStyle === 'fujicolor_eterna_500t') {
+    loraAtmosphere = 'photochemical cinema film emulation: authentic Fujicolor Eterna 500T (8573) 35mm motion picture celluloid processed in native ECN-2 chemistry. Proprietary Fujifilm 4th Color Layer technology delivering clean spectral separation between 5000K daylight and cold display/artificial lighting with strictly zero red halation due to intact Remjet carbon backing layer. Captured on Arriflex 535B or Arricam ST with Zeiss Master Primes (35mm/50mm/85mm T1.3 and 100mm macro T2.0) with ruthless microcontrast, razor-sharp edge definition, and zero optical softening. Muted institutional color palette, cool slate-moss and graphite shadows, neutral desaturated skin tones, and velvety obsidian D-Max blacks. Tactile organic 500T fine micro-grain resolving skin pores, chalk dust, fabric weave, and hairline surface cracks with surgical precision, strictly zero artificial CGI smoothing, zero plastic AI artifacts, zero halation.';
   } else if (visualStyle === 'agfachrome_ct18') {
     loraAtmosphere = 'photochemical cinema film emulation: authentic Agfachrome CT18 (50S) color reversal slide film processed in genuine Agfacolor AP-41 reversal chemistry. Signature German reversal color palette with muted watercolor pastel tones, cold sage-green and slate-moss shadows, desaturated warm hues, and faded ocher accents representing civilizational decay. Captured on Arriflex 35 BL4 with Carl Zeiss Sonnar 40mm f/2.8 HFT and Planar 50mm T1.4 lenses. Soft creamy highlight rolloff, pronounced painterly dye-cloud grain structure with velvety tactile edge sharpness resolving skin dust, micro-fractures, and fabric textures with microscopic clarity, deep velvety D-Max blacks, strictly zero artificial CGI smoothing, zero plastic AI artifacts.';
   } else if (visualStyle === 'kodak_5247') {

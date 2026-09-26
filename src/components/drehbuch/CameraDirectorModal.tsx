@@ -17,9 +17,11 @@ import {
 import {
   CAMERA_MOVEMENT_CATALOG,
   CameraMovementPreset,
+  getCameraMovementCatalog,
   getRecommendedCameraMovement,
 } from '../../utils/cameraCatalog';
 import { WindowConfig, TargetAudience } from '../../types';
+import { Language } from '../../utils/i18n';
 
 interface GeneratedCameraPlanItem {
   windowIndex: number;
@@ -41,6 +43,7 @@ interface CameraDirectorModalProps {
   lmStudioModel?: string;
   lmStudioApiKey?: string;
   onShowToast: (type: 'success' | 'error' | 'info', message: string) => void;
+  language?: Language;
 }
 
 export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
@@ -55,6 +58,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
   lmStudioModel,
   lmStudioApiKey,
   onShowToast,
+  language = 'DE',
 }) => {
   const [activeTab, setActiveTab] = useState<'ai' | 'library'>('ai');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -65,17 +69,20 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
 
   if (!isOpen) return null;
 
+  const isEn = language === 'EN';
+  const catalog = getCameraMovementCatalog(language);
+
   const categories = [
-    { id: 'all', label: 'Alle Bewegungen' },
-    { id: 'drone', label: 'Drohne & Totale' },
-    { id: 'orbit', label: 'Architektur-Orbit' },
-    { id: 'steadicam', label: 'Steadicam-Walkthrough' },
-    { id: 'dolly', label: 'Dolly & Slider' },
-    { id: 'macro', label: '100mm Macro Haptik' },
-    { id: 'crane', label: 'Kran & Sunset Outro' },
+    { id: 'all', label: isEn ? 'All Movements' : 'Alle Bewegungen' },
+    { id: 'drone', label: isEn ? 'Drone & Wide' : 'Drohne & Totale' },
+    { id: 'orbit', label: isEn ? 'Architectural Orbit' : 'Architektur-Orbit' },
+    { id: 'steadicam', label: isEn ? 'Steadicam Walkthrough' : 'Steadicam-Walkthrough' },
+    { id: 'dolly', label: isEn ? 'Dolly & Slider' : 'Dolly & Slider' },
+    { id: 'macro', label: isEn ? '100mm Macro Haptics' : '100mm Macro Haptik' },
+    { id: 'crane', label: isEn ? 'Crane & Sunset Outro' : 'Kran & Sunset Outro' },
   ];
 
-  const filteredPresets = CAMERA_MOVEMENT_CATALOG.filter((p) => {
+  const filteredPresets = catalog.filter((p) => {
     if (selectedCategory === 'all') return true;
     return p.category === selectedCategory;
   });
@@ -160,14 +167,16 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-zinc-900">
-                  Cineastischer Kamera-Director (Camführung)
+                  {isEn ? 'Cinematic Camera Director (Camera Movement)' : 'Cineastischer Kamera-Director (Camführung)'}
                 </h2>
                 <span className="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-bold rounded-full font-mono">
-                  35mm / Drohne / 100mm Macro
+                  {isEn ? '35mm / Drone / 100mm Macro' : '35mm / Drohne / 100mm Macro'}
                 </span>
               </div>
               <p className="text-xs text-zinc-500">
-                Lass LM Studio eine zielgruppengenaue 4-Phasen-Kamera-Dramaturgie erstellen oder wähle aus dem Hollywood-Katalog.
+                {isEn
+                  ? 'Let LM Studio orchestrate a target-audience tailored 4-phase camera choreography or choose from the Hollywood catalog.'
+                  : 'Lass LM Studio eine zielgruppengenaue 4-Phasen-Kamera-Dramaturgie erstellen oder wähle aus dem Hollywood-Katalog.'}
               </p>
             </div>
           </div>
@@ -194,7 +203,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>⚡ LM Studio KI-Kamera-Dramaturgie</span>
+              <span>{isEn ? '⚡ LM Studio AI Camera Choreography' : '⚡ LM Studio KI-Kamera-Dramaturgie'}</span>
             </button>
 
             <button
@@ -207,13 +216,13 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
               }`}
             >
               <Video className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Kamera-Katalog ({CAMERA_MOVEMENT_CATALOG.length})</span>
+              <span>{isEn ? `Camera Catalog (${catalog.length})` : `Kamera-Katalog (${catalog.length})`}</span>
             </button>
           </div>
 
           {activeTab === 'library' && (
             <div className="flex items-center gap-2 text-xs">
-              <span className="font-bold text-zinc-600 text-[11px]">Ziel-Window:</span>
+              <span className="font-bold text-zinc-600 text-[11px]">{isEn ? 'Target Window:' : 'Ziel-Window:'}</span>
               <div className="flex gap-1">
                 {windows.map((w, idx) => (
                   <button
@@ -242,10 +251,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
               <div>
                 <h3 className="text-xs font-bold text-zinc-900 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-amber-500" />
-                  KI-Kameraregie für {windows.length} Windows
+                  {isEn ? `AI Camera Direction for ${windows.length} Windows` : `KI-Kameraregie für ${windows.length} Windows`}
                 </h3>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  Choreografiert Intro-Drohne, Steadicam-Walkthrough, 100mm Macro-Haptik &amp; Sunset-Kranaufzug.
+                  {isEn
+                    ? 'Choreographs Intro drone, Steadicam walkthrough, 100mm macro tactile details & sunset crane crane-up.'
+                    : 'Choreografiert Intro-Drohne, Steadicam-Walkthrough, 100mm Macro-Haptik & Sunset-Kranaufzug.'}
                 </p>
               </div>
 
@@ -258,12 +269,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 {isGeneratingAiPlan ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>LM Studio choreografiert...</span>
+                    <span>{isEn ? 'LM Studio choreographing...' : 'LM Studio choreografiert...'}</span>
                   </>
                 ) : (
                   <>
                     <Zap className="w-4 h-4" />
-                    <span>⚡ Jetzt KI-Kameraführung generieren</span>
+                    <span>{isEn ? '⚡ Generate AI Camera Plan' : '⚡ Jetzt KI-Kameraführung generieren'}</span>
                   </>
                 )}
               </button>
@@ -275,7 +286,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 {aiDirectorVision && (
                   <div className="p-4 bg-amber-50/80 border border-amber-200/80 rounded-xl space-y-1 text-xs text-amber-950 font-medium leading-relaxed">
                     <span className="font-bold text-amber-900 block text-[11px] uppercase tracking-wider">
-                      🎬 Regie-Vision des DoP:
+                      {isEn ? '🎬 DoP Director Vision:' : '🎬 Regie-Vision des DoP:'}
                     </span>
                     {aiDirectorVision}
                   </div>
@@ -321,12 +332,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                               item.windowIndex !== undefined ? item.windowIndex : idx,
                               item.movementPrompt
                             );
-                            onShowToast('success', `Kamerabewegung auf Window ${winNum} angewendet!`);
+                            onShowToast('success', isEn ? `Camera movement applied to Window ${winNum}!` : `Kamerabewegung auf Window ${winNum} angewendet!`);
                           }}
                           className="w-full py-1.5 bg-zinc-100 hover:bg-zinc-900 hover:text-white text-zinc-800 font-bold text-xs rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
                         >
                           <CheckCircle2 className="w-3 h-3 text-amber-500" />
-                          <span>Auf Window {winNum} anwenden</span>
+                          <span>{isEn ? `Apply to Window ${winNum}` : `Auf Window ${winNum} anwenden`}</span>
                         </button>
                       </div>
                     );
@@ -339,10 +350,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                   <Video className="w-6 h-6" />
                 </div>
                 <h3 className="text-sm font-bold text-zinc-800">
-                  Noch keine KI-Kamera-Choreografie generiert
+                  {isEn ? 'No AI Camera Choreography generated yet' : 'Noch keine KI-Kamera-Choreografie generiert'}
                 </h3>
                 <p className="text-xs text-zinc-500 max-w-md mx-auto leading-relaxed">
-                  Klicke oben auf <strong>„⚡ Jetzt KI-Kameraführung generieren“</strong>, um eine aufeinander abgestimmte 4-Window Dramaturgie von LM Studio berechnen zu lassen.
+                  {isEn
+                    ? 'Click on "⚡ Generate AI Camera Plan" above to let LM Studio calculate a coordinated 4-window sequence.'
+                    : 'Klicke oben auf „⚡ Jetzt KI-Kameraführung generieren“, um eine aufeinander abgestimmte 4-Window Dramaturgie von LM Studio berechnen zu lassen.'}
                 </p>
               </div>
             )}
@@ -392,7 +405,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                   </div>
 
                   <div className="p-2.5 bg-zinc-50 rounded-lg border border-zinc-200 text-[11px] font-mono text-zinc-800 space-y-1">
-                    <div className="text-[10px] font-sans font-bold text-zinc-500">Prompt-Text:</div>
+                    <div className="text-[10px] font-sans font-bold text-zinc-500">{isEn ? 'Prompt Text:' : 'Prompt-Text:'}</div>
                     <div className="line-clamp-2">{preset.suggestedPrompt}</div>
                   </div>
 
@@ -402,13 +415,15 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                       onApplyCameraMovementToWindow(targetWindowIndex, preset.suggestedPrompt);
                       onShowToast(
                         'success',
-                        `"${preset.name}" auf Window ${windows[targetWindowIndex]?.windowNumber || targetWindowIndex + 1} angewendet!`
+                        isEn
+                          ? `"${preset.name}" applied to Window ${windows[targetWindowIndex]?.windowNumber || targetWindowIndex + 1}!`
+                          : `"${preset.name}" auf Window ${windows[targetWindowIndex]?.windowNumber || targetWindowIndex + 1} angewendet!`
                       );
                     }}
                     className="w-full py-2 bg-zinc-100 hover:bg-zinc-900 hover:text-white text-zinc-800 font-bold text-xs rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Video className="w-3.5 h-3.5" />
-                    <span>Auf Window {windows[targetWindowIndex]?.windowNumber || targetWindowIndex + 1} anwenden</span>
+                    <span>{isEn ? `Apply to Window ${windows[targetWindowIndex]?.windowNumber || targetWindowIndex + 1}` : `Auf Window ${windows[targetWindowIndex]?.windowNumber || targetWindowIndex + 1} anwenden`}</span>
                   </button>
                 </div>
               ))}
@@ -423,7 +438,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 rounded-xl text-xs font-bold transition cursor-pointer"
           >
-            Schließen
+            {isEn ? 'Close' : 'Schließen'}
           </button>
 
           <div className="flex items-center gap-2">
@@ -434,7 +449,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
-                <span>KI-Plan auf alle {windows.length} Windows anwenden</span>
+                <span>{isEn ? `Apply AI Plan to all ${windows.length} Windows` : `KI-Plan auf alle ${windows.length} Windows anwenden`}</span>
               </button>
             ) : (
               <button
@@ -443,7 +458,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4 text-amber-400" />
-                <span>Standard-Plan anwenden</span>
+                <span>{isEn ? 'Apply Standard Plan' : 'Standard-Plan anwenden'}</span>
               </button>
             )}
           </div>

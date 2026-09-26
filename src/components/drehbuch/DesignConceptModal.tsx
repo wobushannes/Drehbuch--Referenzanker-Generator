@@ -16,6 +16,7 @@ import {
   Type,
 } from 'lucide-react';
 import { TargetAudience } from '../../types';
+import { Language } from '../../utils/i18n';
 
 interface ColorItem {
   name: string;
@@ -53,6 +54,7 @@ interface DesignConceptModalProps {
   lmStudioModel?: string;
   lmStudioApiKey?: string;
   onShowToast: (type: 'success' | 'error' | 'info', message: string) => void;
+  language?: Language;
 }
 
 export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
@@ -64,7 +66,9 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
   lmStudioModel,
   lmStudioApiKey,
   onShowToast,
+  language = 'DE',
 }) => {
+  const isEn = language === 'EN';
   const [isLoading, setIsLoading] = useState(false);
   const [design, setDesign] = useState<DesignConcept | null>(null);
   const [copiedHex, setCopiedHex] = useState<string | null>(null);
@@ -95,15 +99,15 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
         onShowToast(
           'success',
           data.source === 'lmstudio'
-            ? 'Design- & Look-Konzept via LM Studio generiert!'
-            : 'Design- & Look-Konzept erstellt (Intelligenter Modus)!'
+            ? (isEn ? 'Design & Look concept generated via LM Studio!' : 'Design- & Look-Konzept via LM Studio generiert!')
+            : (isEn ? 'Design & Look concept created (Intelligent Mode)!' : 'Design- & Look-Konzept erstellt (Intelligenter Modus)!')
         );
       } else {
-        throw new Error(data.error || 'Fehler beim Erstellen des Design-Konzepts');
+        throw new Error(data.error || (isEn ? 'Error creating design concept' : 'Fehler beim Erstellen des Design-Konzepts'));
       }
     } catch (err: any) {
       console.error('Design generation failed:', err);
-      onShowToast('error', `Design-Generierung fehlgeschlagen: ${err.message}`);
+      onShowToast('error', `${isEn ? 'Design generation failed' : 'Design-Generierung fehlgeschlagen'}: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +123,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
       colorPalette: design.colorPalette,
       themeTitle: design.themeTitle,
     });
-    onShowToast('success', 'Design-, Licht- und Sound-Vorgaben ins Drehbuch übernommen!');
+    onShowToast('success', isEn ? 'Design, lighting and sound settings applied to screenplay!' : 'Design-, Licht- und Sound-Vorgaben ins Drehbuch übernommen!');
     onClose();
   };
 
@@ -127,7 +131,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
     navigator.clipboard.writeText(text);
     setCopiedHex(text);
     setTimeout(() => setCopiedHex(null), 2000);
-    onShowToast('info', `Farbwert "${text}" in die Zwischenablage kopiert.`);
+    onShowToast('info', isEn ? `Color code "${text}" copied to clipboard.` : `Farbwert "${text}" in die Zwischenablage kopiert.`);
   };
 
   return (
@@ -142,14 +146,16 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-zinc-900">
-                  LM Studio Design- &amp; Look-Director
+                  {isEn ? 'LM Studio Design & Look Director' : 'LM Studio Design- & Look-Director'}
                 </h2>
                 <span className="px-2 py-0.5 bg-indigo-100 text-indigo-900 text-[10px] font-bold rounded-full font-mono">
-                  Zielgruppen-Ästhetik
+                  {isEn ? 'Audience Aesthetics' : 'Zielgruppen-Ästhetik'}
                 </span>
               </div>
               <p className="text-xs text-zinc-500">
-                Generiere Lichtstimmung, Farbpalette, Haptik und Sounddesign abgestimmt auf{' '}
+                {isEn
+                  ? 'Generate lighting mood, color palette, tactile materials, and sound design tailored to '
+                  : 'Generiere Lichtstimmung, Farbpalette, Haptik und Sounddesign abgestimmt auf '}
                 <strong className="text-zinc-800 font-semibold">{targetAudience.name}</strong>.
               </p>
             </div>
@@ -189,12 +195,12 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
               {isLoading ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-amber-300" />
-                  <span>LM Studio analysiert Look...</span>
+                  <span>{isEn ? 'LM Studio analyzing look...' : 'LM Studio analysiert Look...'}</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 text-amber-300" />
-                  <span>⚡ Design-Vorschlag generieren</span>
+                  <span>{isEn ? '⚡ Generate Design Concept' : '⚡ Design-Vorschlag generieren'}</span>
                 </>
               )}
             </button>
@@ -207,7 +213,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
               <div className="bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between shadow-xs">
                 <div>
                   <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">
-                    Kreatives Look-Konzept:
+                    {isEn ? 'Creative Look Concept:' : 'Kreatives Look-Konzept:'}
                   </span>
                   <h3 className="text-base font-bold">{design.themeTitle}</h3>
                 </div>
@@ -223,9 +229,9 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold text-zinc-900 flex items-center gap-2">
                     <Palette className="w-4 h-4 text-amber-600" />
-                    Harmonische Farbpalette &amp; Materialakzente
+                    {isEn ? 'Harmonious Color Palette & Material Accents' : 'Harmonische Farbpalette & Materialakzente'}
                   </h4>
-                  <span className="text-[10px] text-zinc-500 font-mono">Klick zum Kopieren</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">{isEn ? 'Click to copy' : 'Klick zum Kopieren'}</span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -243,7 +249,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                         {copiedHex === c.hex && (
                           <div className="bg-black/75 text-white text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
                             <Check className="w-3 h-3 text-emerald-400" />
-                            Kopiert
+                            {isEn ? 'Copied' : 'Kopiert'}
                           </div>
                         )}
                       </div>
@@ -267,7 +273,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                 <div className="bg-white border border-zinc-200 p-4 rounded-xl space-y-2 shadow-2xs">
                   <h4 className="text-xs font-bold text-zinc-900 flex items-center gap-2">
                     <Sun className="w-4 h-4 text-amber-500" />
-                    Lichtführung &amp; Atmosphäre (Beleuchtung)
+                    {isEn ? 'Lighting Direction & Atmosphere' : 'Lichtführung & Atmosphäre (Beleuchtung)'}
                   </h4>
                   <p className="text-xs text-zinc-700 leading-relaxed bg-amber-50/50 p-3 rounded-lg border border-amber-200/60 font-medium">
                     {design.lightAndAtmosphere}
@@ -281,13 +287,13 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                 <div className="bg-white border border-zinc-200 p-4 rounded-xl space-y-2 shadow-2xs">
                   <h4 className="text-xs font-bold text-zinc-900 flex items-center gap-2">
                     <Trees className="w-4 h-4 text-emerald-600" />
-                    Materialwelt, Haptik &amp; Texturen
+                    {isEn ? 'Materials, Tactility & Textures' : 'Materialwelt, Haptik & Texturen'}
                   </h4>
                   <p className="text-xs text-zinc-700 leading-relaxed bg-emerald-50/50 p-3 rounded-lg border border-emerald-200/60 font-medium">
                     {design.materialWorld}
                   </p>
                   <div className="text-[11px] text-zinc-500 font-mono pt-1">
-                    <strong>Kulisse:</strong> {design.globalBackgroundSuggestion}
+                    <strong>{isEn ? 'Setting:' : 'Kulisse:'}</strong> {design.globalBackgroundSuggestion}
                   </div>
                 </div>
               </div>
@@ -298,13 +304,13 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                 <div className="bg-white border border-zinc-200 p-4 rounded-xl space-y-2 shadow-2xs">
                   <h4 className="text-xs font-bold text-zinc-900 flex items-center gap-2">
                     <Music className="w-4 h-4 text-indigo-600" />
-                    Sounddesign &amp; Akustische Signatur
+                    {isEn ? 'Sound Design & Acoustic Signature' : 'Sounddesign & Akustische Signatur'}
                   </h4>
                   <p className="text-xs text-zinc-700 leading-relaxed bg-indigo-50/50 p-3 rounded-lg border border-indigo-200/60 font-medium">
                     {design.soundAndMusic}
                   </p>
                   <div className="text-[11px] text-zinc-500 font-mono pt-1">
-                    <strong>Foley &amp; Haptik:</strong> {design.globalSoundDesignSuggestion}
+                    <strong>{isEn ? 'Foley & Haptics:' : 'Foley & Haptik:'}</strong> {design.globalSoundDesignSuggestion}
                   </div>
                 </div>
 
@@ -312,7 +318,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                 <div className="bg-white border border-zinc-200 p-4 rounded-xl space-y-2 shadow-2xs">
                   <h4 className="text-xs font-bold text-zinc-900 flex items-center gap-2">
                     <Type className="w-4 h-4 text-purple-600" />
-                    Typografie &amp; CI-Einblendungen
+                    {isEn ? 'Typography & Brand / CI Overlays' : 'Typografie & CI-Einblendungen'}
                   </h4>
                   <p className="text-xs text-zinc-700 leading-relaxed bg-purple-50/50 p-3 rounded-lg border border-purple-200/60 font-medium">
                     {design.typographyAndCI}
@@ -326,12 +332,12 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
                 <Palette className="w-6 h-6" />
               </div>
               <h3 className="text-sm font-bold text-zinc-800">
-                Noch kein Design-Konzept generiert
+                {isEn ? 'No design concept generated yet' : 'Noch kein Design-Konzept generiert'}
               </h3>
               <p className="text-xs text-zinc-500 max-w-md mx-auto leading-relaxed">
-                Klicke oben auf <strong>„⚡ Design-Vorschlag generieren“</strong>, um mit LM Studio
-                ein perfekt abgestimmtes Farb-, Licht- und Soundprofil für{' '}
-                <strong>{targetAudience.name}</strong> zu erstellen.
+                {isEn
+                  ? <>Click on <strong>„⚡ Generate Design Concept“</strong> above to create a color, lighting and sound profile tailored for <strong>{targetAudience.name}</strong> with LM Studio.</>
+                  : <>Klicke oben auf <strong>„⚡ Design-Vorschlag generieren“</strong>, um mit LM Studio ein perfekt abgestimmtes Farb-, Licht- und Soundprofil für <strong>{targetAudience.name}</strong> zu erstellen.</>}
               </p>
             </div>
           )}
@@ -344,7 +350,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 bg-zinc-200 hover:bg-zinc-300 text-zinc-800 rounded-xl text-xs font-bold transition cursor-pointer"
           >
-            Abbrechen
+            {isEn ? 'Cancel' : 'Abbrechen'}
           </button>
 
           {design && (
@@ -354,7 +360,7 @@ export const DesignConceptModal: React.FC<DesignConceptModalProps> = ({
               className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>✨ In Drehbuch &amp; globale Einstellungen übernehmen</span>
+              <span>{isEn ? '✨ Apply to screenplay & global settings' : '✨ In Drehbuch & globale Einstellungen übernehmen'}</span>
             </button>
           )}
         </div>

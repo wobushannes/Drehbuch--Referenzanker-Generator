@@ -196,8 +196,8 @@ export const TimelineExportModal: React.FC<TimelineExportModalProps> = ({
                     .EDL
                   </span>
                 </div>
-                <div className="text-xs font-bold">DaVinci / Premiere</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">CMX 3600 Timeline</div>
+                <div className="text-xs font-bold">{language === 'DE' ? 'DaVinci / Premiere' : 'DaVinci / Premiere'}</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">{language === 'DE' ? 'CMX 3600 Timeline' : 'CMX 3600 Timeline'}</div>
               </button>
 
               {/* Option 2: FCPXML */}
@@ -217,7 +217,7 @@ export const TimelineExportModal: React.FC<TimelineExportModalProps> = ({
                   </span>
                 </div>
                 <div className="text-xs font-bold">Final Cut / Resolve</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">Mit Marker-Notizen</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">{language === 'DE' ? 'Mit Marker-Notizen' : 'With Marker Notes'}</div>
               </button>
 
               {/* Option 3: CSV */}
@@ -237,7 +237,7 @@ export const TimelineExportModal: React.FC<TimelineExportModalProps> = ({
                   </span>
                 </div>
                 <div className="text-xs font-bold">Excel / Sheets</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">Tabelle mit UTF-8</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">{language === 'DE' ? 'Tabelle mit UTF-8' : 'Table with UTF-8'}</div>
               </button>
 
               {/* Option 4: Markdown */}
@@ -256,8 +256,8 @@ export const TimelineExportModal: React.FC<TimelineExportModalProps> = ({
                     .MD
                   </span>
                 </div>
-                <div className="text-xs font-bold">Ablaufplan</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">Regie & Team</div>
+                <div className="text-xs font-bold">{language === 'DE' ? 'Ablaufplan' : 'Schedule'}</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">{language === 'DE' ? 'Regie & Team' : 'Director & Crew'}</div>
               </button>
 
               {/* Option 5: TXT */}
@@ -277,7 +277,7 @@ export const TimelineExportModal: React.FC<TimelineExportModalProps> = ({
                   </span>
                 </div>
                 <div className="text-xs font-bold">Single-Line</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">0 Zeilenumbrüche</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">{language === 'DE' ? '0 Zeilenumbrüche' : '0 Line breaks'}</div>
               </button>
             </div>
           </div>

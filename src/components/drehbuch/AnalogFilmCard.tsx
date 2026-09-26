@@ -37,6 +37,21 @@ export interface AnalogProfile {
 
 export const ANALOG_PROFILES: AnalogProfile[] = [
   {
+    id: 'fujicolor_eterna_500t',
+    name: 'Fujicolor Eterna 500T Master Plugin (8573 • ECN-2 • Die Falsifikation)',
+    camera: 'Arriflex 535B / Arricam ST (35mm Motion Picture Celluloid)',
+    lens: 'Zeiss Master Prime (35mm / 50mm / 85mm T1.3 & 100mm Macro T2.0)',
+    chemistry: 'Fujicolor Eterna 500T (8573) in nativer ECN-2 Chemie (4th Color Layer)',
+    description: 'Das offizielle Fujicolor Eterna 500T Master Plugin für den 6-teiligen Zyklus "Die Falsifikation". Emuliert die legendäre japanische Eterna-Emulsion mit 4th Color Layer Technologie: Kühle, gedeckte Schattentiefe (Obsidian D-Max), unbarmherzige Muted Colors, aschige Schiefertöne, messerscharfe Trennung von 5000K-Tageslicht und Kunstlicht/Displays, mikroskopische Texturschärfe auf Deckenstaub und Stoffgewebe sowie natürlicher Highlight-Rolloff mit strikt ZERO roter Halation.',
+    colorShift: 'Gedämpfte Muted Colors, kühle Schiefertöne in den Schatten, saubere 4th-Color-Layer Farbtrennung, neutrale Hauttöne & tiefes samtiges Obsidian D-Max',
+    grain: 'Organisches, mikro-feines 500T Silberhalogenid-Korn mit überragender Plastizität auf Kalkstaub, nasser Wolle und gerissener Bausubstanz',
+    flare: 'Strikt ZERO rote Halation (intakte ECN-2 Remjet-Rußschicht), mikropräzise reflexionsarme T1.3 Linsenzeichnung',
+    badge: 'Master Plugin v4.0',
+    badgeStyle: 'bg-cyan-500/15 text-cyan-950 border-cyan-500/40',
+    paletteColors: ['#1E293B', '#475569', '#94A3B8', '#090D16'],
+    recommendedTemp: '4800K/5000K ECN-2'
+  },
+  {
     id: 'agfachrome_ct18',
     name: 'Agfachrome CT18 Master Plugin (AP-41 Reversal • Das Erlöschen des Spektrums)',
     camera: 'Arriflex 35 BL4 / Leica M4 Rangefinder (Photochemical 35mm)',
@@ -345,9 +360,9 @@ export const AnalogFilmCard: React.FC<AnalogFilmCardProps> = ({
   const [showLabSection, setShowLabSection] = useState(false);
 
   // Group definitions for clear filtering
-  const FAVORITES_IDS = ['agfachrome_ct18', 'kodak_5247', 'kodachrome', 'cinestill_800t', 'art_noir', 'leica_noctilux', '70mm_imax'];
+  const FAVORITES_IDS = ['fujicolor_eterna_500t', 'agfachrome_ct18', 'kodak_5247', 'kodachrome', 'cinestill_800t', 'art_noir', 'leica_noctilux', '70mm_imax'];
   const PHOTO_CLASSIC_IDS = ['agfachrome_ct18', 'art_noir', 'kodachrome', 'cinestill_800t', 'polaroid_fp100c', 'svema_zenit', 'agfachrome_50s', 'orwo_nc21'];
-  const CINE_IDS = ['agfachrome_ct18', 'kodak_5247', 'cinestill_800t', '70mm_imax', '35mm_anamorphic', 'technicolor_v4', 'krasnogorsk_16mm', 'super8_tri_x', 'art_noir'];
+  const CINE_IDS = ['fujicolor_eterna_500t', 'agfachrome_ct18', 'kodak_5247', 'cinestill_800t', '70mm_imax', '35mm_anamorphic', 'technicolor_v4', 'krasnogorsk_16mm', 'super8_tri_x', 'art_noir'];
   const HISTORIC_IDS = ['wet_plate', 'petzval', 'aerochrome_infrared'];
 
   const filteredProfiles = ANALOG_PROFILES.filter((p) => {
@@ -358,6 +373,7 @@ export const AnalogFilmCard: React.FC<AnalogFilmCardProps> = ({
     return true;
   });
 
+  const isFujicolorEterna = currentProfile.id === 'fujicolor_eterna_500t';
   const isAgfachromeCT18 = currentProfile.id === 'agfachrome_ct18';
   const isKodak5247 = currentProfile.id === 'kodak_5247';
   const isKodachrome = currentProfile.id === 'kodachrome';
@@ -390,6 +406,13 @@ export const AnalogFilmCard: React.FC<AnalogFilmCardProps> = ({
               <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3 text-red-600" />
                 <span>Aktiv: {currentProfile.name.split(' (')[0]}</span>
+              </span>
+            )}
+
+            {enabled && isFujicolorEterna && (
+              <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-950 border border-cyan-500/40 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-cyan-700" />
+                <span>ECN-2 4th Layer &amp; Zeiss Master Primes Aktiv</span>
               </span>
             )}
 
@@ -552,6 +575,91 @@ export const AnalogFilmCard: React.FC<AnalogFilmCardProps> = ({
               })}
             </div>
           </div>
+
+          {/* 1. DEDICATED FUJICOLOR ETERNA 500T MASTER COCKPIT (Shown when Fujicolor Eterna is selected) */}
+          {isFujicolorEterna && (
+            <div className="p-4.5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-zinc-950 border-2 border-cyan-500/50 shadow-md space-y-4 text-white">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2.5 rounded-xl bg-cyan-600 text-white shadow-xs">
+                    <Film className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-black text-cyan-200">
+                        Fujicolor Eterna 500T Master Plugin (8573 • ECN-2 • Die Falsifikation)
+                      </h4>
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-cyan-600 text-white">
+                        Aktiv &amp; Kalibriert
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 font-medium mt-0.5">
+                      35mm Motion Picture Celluloid • Fujicolor Eterna 500T (8573) ECN-2 • 4th Color Layer • Zeiss Master Primes (T1.3 &amp; 100mm Macro) • Haneke / Fincher Rigor.
+                    </p>
+                  </div>
+                </div>
+
+                {/* LoRA & Optical Sync Status */}
+                <div className="flex items-center gap-2">
+                  <div className="px-3 py-1.5 text-xs font-bold rounded-lg bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>ECN-2 4th Layer &amp; Zeiss Master Primes injiziert</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Core Verification Guarantees for Fujicolor Eterna 500T */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-cyan-300 font-bold text-xs">
+                    <Layers className="w-4 h-4 text-cyan-400" />
+                    <span>4th Color Layer Farbtrennung</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-snug">
+                    Fujis patentierte Zwischenschicht trennt 5000K-Mischlicht und Kaltlicht-Displays ohne unkontrollierten Farbstich oder Halation.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-cyan-300 font-bold text-xs">
+                    <Flame className="w-4 h-4 text-slate-400" />
+                    <span>Muted Colors &amp; Obsidian D-Max</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-snug">
+                    Unbarmherzige Schattentiefe und aschige Schiefertöne. Entzieht der Szenerie jede bunte Trivialität für existenzielle Wucht.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-cyan-300 font-bold text-xs">
+                    <Eye className="w-4 h-4 text-cyan-400" />
+                    <span>Zeiss Master Primes T1.3</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-snug">
+                    Chirurgische Schärfe auf Deckenstaub, Hautporen und Textilfasern – rigoros frei von digitaler Wachshaut oder AI-Glättung.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-cyan-300 font-bold text-xs">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>ZERO Rote Halation</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-snug">
+                    Intakte ECN-2 Remjet-Rußschicht verhindert Lichtstreuung an Kanten; 100% fotochemische Disziplin ohne CineStill-Effekthascherei.
+                  </p>
+                </div>
+              </div>
+
+              {/* Technical Recipe / Knowledge Box */}
+              <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/50 text-xs text-cyan-100 leading-relaxed flex items-start gap-2">
+                <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong>Photochemische Master-Emulation:</strong> Fujicolor Eterna 500T (8573) ist das filmische Fundament des 6-teiligen Zyklus <em>&quot;Die Falsifikation&quot;</em>. Das Plugin injiziert verbindlich: <code>Fujicolor Eterna 500T (8573) motion picture celluloid</code>, <code>native ECN-2 processing with 4th color layer</code>, <code>Zeiss Master Primes (35mm/50mm/85mm T1.3 &amp; 100mm macro)</code>, <code>muted institutional tones &amp; slate-moss shadows</code>, <code>obsidian D-Max blacks</code> und <code>tactile organic micro-grain with strictly ZERO red halation or CGI smoothing</code>.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* 2. DEDICATED AGFACHROME CT18 MASTER COCKPIT (Shown when Agfachrome CT18 is selected) */}
           {isAgfachromeCT18 && (
